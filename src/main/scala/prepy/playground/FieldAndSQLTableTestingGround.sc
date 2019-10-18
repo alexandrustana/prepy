@@ -1,7 +1,5 @@
-import cats.data.OptionT
-import cats.effect.IO
-import doobie.free.connection.ConnectionIO
 import prepy.convert.ops._
+import shapeless.labelled.FieldType
 import shapeless.ops.hlist._
 import shapeless.ops.record._
 import shapeless.{::, Generic, HList, HNil, LabelledGeneric, _}
@@ -25,33 +23,56 @@ object Table {
 
   object implicits {
 
-    trait lowPriorityFlattener extends Poly1 {
-      println(this)
-      implicit def default[T]: Case.Aux[T, T :: HNil] = at[T](_ :: HNil)
-    }
-
-    object flattener extends lowPriorityFlattener {
-      implicit def caseProduct[T <: Product, HL <: HList](
+    trait primitivePoly extends Poly1 {
+      implicit def primitive[K <: Symbol, V](
         implicit
-        gen: Generic.Aux[T, HL],
-        fm:  FlatMapper[flattener.type, HL]
-      ): Case.Aux[T, fm.Out] = at[T] { t =>
-        gen.to(t).flatMap(flattener)
+        witness: Witness.Aux[K]
+      ): Case.Aux[FieldType[K, V], K :: HNil] = {
+        at[FieldType[K, V]](t => witness.value :: HNil)
       }
     }
 
+    object complexPoly extends primitivePoly {
+      implicit def complex[K <: Symbol, V <: Product, GenV <: HList, FlatV <: HList](
+        implicit
+        witness: Witness.Aux[K],
+        gen:     LabelledGeneric.Aux[V, GenV],
+        flatten: FlatMapper.Aux[complexPoly.type, GenV, FlatV]
+      ): Case.Aux[FieldType[K, V], FlatV] = {
+        at[FieldType[K, V]](t => flatten(gen.to(t)))
+      }
+    }
+
+    object witnessPoly extends Poly0 {
+      implicit def default[T](implicit witness: Witness.Aux[T]): ProductCase.Aux[HNil, T] =
+        at(witness.value)
+    }
+
     implicit def genTable[
-      Cols,
-      ColsRepr <: HList,
-      ColsFlatRepr <: HList,
+      Domain,
+      DomainRepr <: HList,
+      FlatDomainRepr <: HList,
+      SymbolRepr <: HList,
       FieldRepr <: HList
     ](
-      implicit gen: LabelledGeneric.Aux[Cols, ColsRepr],
-      flatMapField: FlatMapper.Aux[flattener.type, ColsRepr, ColsFlatRepr],
-      fields:       Keys.Aux[ColsFlatRepr, FieldRepr],
-      fieldsToList: ToList[FieldRepr, Symbol]
-    ): Table[Cols] = {
-      pure(fieldsToList(fields()))
+      implicit generic: LabelledGeneric.Aux[Domain, DomainRepr],
+      flatMap:          FlatMapper.Aux[complexPoly.type, DomainRepr, FlatDomainRepr],
+      toList:           ToList[FlatDomainRepr, Symbol],
+      fill:             FillWith[witnessPoly.type, FlatDomainRepr]
+    ): Table[Domain] = {
+      pure(toList(fill()))
     }
   }
 }
+
+import Table.implicits._
+
+case class EvenInner(n: Char)
+case class Inner(k: String, m: EvenInner)
+case class Test(i: Int, j: Boolean, l: Inner)
+
+val gen = LabelledGeneric[Test]
+val mapped = FlatMapper[complexPoly.type, gen.Repr]
+val toList = ToList[mapped.Out, Symbol]
+val fill = FillWith[witnessPoly.type, mapped.Out]
+toList(fill())
