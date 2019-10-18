@@ -4,7 +4,7 @@ import shapeless.ops.hlist._
 import shapeless.ops.record._
 import shapeless.{::, Generic, HList, HNil, LabelledGeneric, _}
 
-trait Table[A] extends Insertable with Updatable with Selectable with Deletable {
+trait Table[A] {
   type Entity = A
 
   val fields: List[Symbol]
@@ -65,14 +65,26 @@ object Table {
   }
 }
 
-import Table.implicits._
+object SelectSyntax {
+  def select[T <: Product](implicit inst: Table[T]): Selectable = Selectable(inst.fields)
+
+  case class Selectable(fields: List[Symbol]) {
+    def from[T](implicit typeable: Typeable[T]) = Whereable(fields, typeable.describe)
+  }
+
+  case class Whereable(fields: List[Symbol], tableName: String) {
+
+    def apply(): String = s"SELECT ${fields.map(_.name).mkString(",")} FROM $tableName"
+    def where(condition: String*): String = s"SELECT ${fields.map(_.name).mkString(",")} FROM $tableName WHERE " + condition
+  }
+}
 
 case class EvenInner(n: Char)
 case class Inner(k: String, m: EvenInner)
 case class Test(i: Int, j: Boolean, l: Inner)
 
-val gen = LabelledGeneric[Test]
-val mapped = FlatMapper[complexPoly.type, gen.Repr]
-val toList = ToList[mapped.Out, Symbol]
-val fill = FillWith[witnessPoly.type, mapped.Out]
-toList(fill())
+import SelectSyntax._
+import Table.implicits._
+
+select[Test].from[Test].where("1 == 1")
+select[Test].from[Test].apply()
