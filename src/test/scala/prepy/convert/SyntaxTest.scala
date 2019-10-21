@@ -10,22 +10,23 @@ class SyntaxTest extends Specification {
 
   "Select" should {
     "simple" in {
-      val sql: String = select[Test].from[Test].apply()
+      val sql = select[Test].from[Test].apply()
+
       sql === "SELECT i,j FROM Test"
     }
     "complex" in {
-      val sql: String = select[Test].from[Test].where("1 == 1").apply()
+      val sql = select[Test].from[Test].where("1 == 1").apply()
       sql === "SELECT i,j FROM Test WHERE (1 == 1)"
     }
   }
 
   "Delete" should {
     "simple" in {
-      val sql: String = delete[Test].apply()
+      val sql = delete[Test].apply()
       delete[Test].apply() === "DELETE FROM Test"
     }
     "complex" in {
-      val sql: String = delete[Test].where("1 == 1").apply()
+      val sql = delete[Test].where("1 == 1").apply()
       sql === "DELETE FROM Test WHERE (1 == 1)"
     }
   }
