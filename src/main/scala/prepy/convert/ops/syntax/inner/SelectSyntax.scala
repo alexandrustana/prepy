@@ -1,10 +1,9 @@
-package prepy.convert.ops.syntax
+package prepy.convert.ops.syntax.inner
 
 import prepy.convert.Domain
-import prepy.convert.ops.syntax.inner.{QueryElement, WhereSyntax}
 import shapeless.Typeable
 
-trait SelectSyntax extends WhereSyntax {
+private[syntax] trait SelectSyntax extends WhereSyntax {
 
   def select[T <: Product](implicit inst: Domain[T]): `selectT` = `selectT`(inst.fields)
 

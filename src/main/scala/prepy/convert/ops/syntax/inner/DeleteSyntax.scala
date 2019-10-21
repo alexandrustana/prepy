@@ -1,9 +1,8 @@
-package prepy.convert.ops.syntax
+package prepy.convert.ops.syntax.inner
 
-import prepy.convert.ops.syntax.inner.{QueryElement, WhereSyntax}
 import shapeless.Typeable
 
-trait DeleteSyntax extends WhereSyntax {
+private[syntax] trait DeleteSyntax extends WhereSyntax {
 
   def delete[T <: Product](implicit typeable: Typeable[T]): `deleteT` =
     `deleteT`(typeable.describe)
