@@ -11,11 +11,11 @@ class SyntaxTest extends Specification {
     "simple" in {
       val sql = select[Test].from[Test].apply()
 
-      sql === "SELECT i,j FROM Test"
+      sql === "SELECT i, j FROM Test"
     }
     "complex" in {
-      val sql = select[Test].from[Test].where("1 == 1").apply()
-      sql === "SELECT i,j FROM Test WHERE (1 == 1)"
+      val sql = select[Test].from[Test].where("1 == 1", "1 == 2").apply()
+      sql === "SELECT i, j FROM Test WHERE (1 == 1) AND (1 == 2)"
     }
   }
 
@@ -34,7 +34,7 @@ class SyntaxTest extends Specification {
     "simple" in {
       val sql = insert[Test].values().apply()
 
-      sql === "INSERT INTO Test (i,j) VALUES (?,?)"
+      sql === "INSERT INTO Test (i, j) VALUES (?, ?)"
     }
   }
 
