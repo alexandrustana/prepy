@@ -1,5 +1,5 @@
 package prepy.convert.ops.syntax.inner
 
-private[syntax] object UpdateSyntax {
+private[syntax] trait UpdateSyntax {
 
 }

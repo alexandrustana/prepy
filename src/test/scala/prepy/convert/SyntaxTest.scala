@@ -1,8 +1,7 @@
 package prepy.convert
 
 import org.specs2.mutable._
-import prepy.convert.ops.Syntax._
-import prepy.convert.Domain
+import prepy.convert.ops.syntax._
 import prepy.convert.Domain.implicits._
 
 class SyntaxTest extends Specification {
