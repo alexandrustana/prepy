@@ -1,7 +1,7 @@
 package prepy.convert
 
 import org.specs2.mutable._
-import prepy.convert.ops.SelectSyntax._
+import prepy.convert.ops.Syntax._
 import prepy.convert.Domain
 import prepy.convert.Domain.implicits._
 
@@ -10,10 +10,23 @@ class SyntaxTest extends Specification {
 
   "Select" should {
     "simple" in {
-      select[Test].from[Test].apply() === "SELECT i,j FROM Test"
+      val sql: String = select[Test].from[Test].apply()
+      sql === "SELECT i,j FROM Test"
     }
     "complex" in {
-      select[Test].from[Test].where("1 == 1") === "SELECT i,j FROM Test WHERE (1 == 1)"
+      val sql: String = select[Test].from[Test].where("1 == 1").apply()
+      sql === "SELECT i,j FROM Test WHERE (1 == 1)"
+    }
+  }
+
+  "Delete" should {
+    "simple" in {
+      val sql: String = delete[Test].apply()
+      delete[Test].apply() === "DELETE FROM Test"
+    }
+    "complex" in {
+      val sql: String = delete[Test].where("1 == 1").apply()
+      sql === "DELETE FROM Test WHERE (1 == 1)"
     }
   }
 }
