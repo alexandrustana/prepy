@@ -1,4 +1,4 @@
-package prepy.convert
+package prepy
 
 import shapeless._
 import shapeless.labelled.FieldType
