@@ -1,4 +1,4 @@
-package prepy.syntax.elements
+package prepy.syntax.plain
 
 import shapeless.Typeable
 

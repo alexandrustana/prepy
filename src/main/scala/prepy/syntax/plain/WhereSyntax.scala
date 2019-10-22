@@ -1,4 +1,4 @@
-package prepy.syntax.elements
+package prepy.syntax.plain
 
 private[prepy] trait WhereSyntax {
   private[prepy] case class `whereT`(queryElement: QueryElement, condition: String) extends QueryElement {
