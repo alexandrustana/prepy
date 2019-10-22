@@ -1,6 +1,8 @@
 package prepy.syntax.elements
 
+import cats.data.Validated.Invalid
 import prepy.Domain
+import prepy.visitor.QueryVisitor
 import shapeless.Typeable
 
 private[prepy] trait SelectSyntax extends WhereSyntax {
@@ -8,6 +10,9 @@ private[prepy] trait SelectSyntax extends WhereSyntax {
   def select[T <: Product](implicit inst: Domain[T]): `selectT` = `selectT`(inst.fields)
 
   private[prepy] case class `selectT`(fields: List[Symbol]) extends QueryElement {
+    override def apply(implicit visitor: QueryVisitor) =
+      Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[T]`")
+
     def from[T](implicit typeable: Typeable[T]): `fromT` = `fromT`(this, typeable.describe)
 
     override def toString: String = s"SELECT ${fields.map(_.name).mkString(", ")}"
