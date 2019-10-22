@@ -161,4 +161,27 @@ class PrepySpec extends Specification {
       }
     }
   }
+
+  "insert" should {
+    "be equal" in {
+      "insert all fields" in {
+        insert[ATable].values().apply() mustEqual Valid(
+          "INSERT INTO ATable (i, j, k, l, m, n, o, p) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        )
+      }
+      "insert all fields from nested product" in {
+        "one level nesting" in {
+          insert[DTable].values().apply() mustEqual Valid("INSERT INTO DTable (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)")
+        }
+        "two level nesting" in {
+          insert[ETable].values().apply() mustEqual Valid(
+            "INSERT INTO ETable (d, a, i, j, k, c, f) VALUES (?, ?, ?, ?, ?, ?, ?)"
+          )
+        }
+      }
+    }
+    "be invalid" in {
+      insert[ATable].apply() mustEqual Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values`")
+    }
+  }
 }
