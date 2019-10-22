@@ -1,22 +1,24 @@
-package prepy.convert
+package prepy
 
 import cats.data.Validated.{Invalid, Valid}
-import cats.implicits._
 import org.specs2.mutable._
 import prepy.syntax._
 import prepy.implicits._
+import shapeless.cachedImplicit
 
 class PrepySpec extends Specification {
 
   case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
-
   case class BTable(i: Int, j: Boolean, k: String)
+  case class CTable(i: Int, l: Char, o:    List[Int], p: Option[Float])
+  case class DTable(a: Int, b: BTable, c:  String)
+  case class ETable(d: Int, e: DTable, f:  String)
 
-  case class CTable(i: Int, l: Char, o: List[Int], p: Option[Float])
-
-  case class DTable(a: Int, b: BTable, c: String)
-
-  case class ETable(d: Int, e: DTable, f: String)
+  implicit val aDomain = cachedImplicit[Domain[ATable]]
+  implicit val bDomain = cachedImplicit[Domain[BTable]]
+  implicit val cDomain = cachedImplicit[Domain[CTable]]
+  implicit val dDomain = cachedImplicit[Domain[DTable]]
+  implicit val EDomain = cachedImplicit[Domain[ETable]]
 
   "select" should {
 
@@ -165,16 +167,18 @@ class PrepySpec extends Specification {
   "insert" should {
     "be equal" in {
       "insert all fields" in {
-        insert[ATable].values().apply() mustEqual Valid(
+        insert[ATable].values[ATable].apply() mustEqual Valid(
           "INSERT INTO ATable (i, j, k, l, m, n, o, p) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         )
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
-          insert[DTable].values().apply() mustEqual Valid("INSERT INTO DTable (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)")
+          insert[DTable].values[DTable].apply() mustEqual Valid(
+            "INSERT INTO DTable (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)"
+          )
         }
         "two level nesting" in {
-          insert[ETable].values().apply() mustEqual Valid(
+          insert[ETable].values[ETable].apply() mustEqual Valid(
             "INSERT INTO ETable (d, a, i, j, k, c, f) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
@@ -190,14 +194,18 @@ class PrepySpec extends Specification {
     "be equal" in {
       "update all query" in {
         "without condition" in {
-          update[ATable].set[ATable].apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?")
+          update[ATable].set[ATable].apply() mustEqual Valid(
+            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?"
+          )
         }
 
         "with single condition" in {
           update[ATable]
             .set[ATable]
             .where("i == 1")
-            .apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)")
+            .apply() mustEqual Valid(
+            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)"
+          )
         }
 
         "with multiple conditions" in {
@@ -206,7 +214,9 @@ class PrepySpec extends Specification {
               .set[ATable]
               .where("i == 1")
               .and("j == TRUE")
-              .apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)")
+              .apply() mustEqual Valid(
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)"
+            )
           }
           "multiple AND conditions" in {
             update[ATable]
@@ -223,7 +233,9 @@ class PrepySpec extends Specification {
               .set[ATable]
               .where("i == 1")
               .or("j == TRUE")
-              .apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)")
+              .apply() mustEqual Valid(
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)"
+            )
           }
           "multiple OR conditions" in {
             update[ATable]
@@ -262,7 +274,9 @@ class PrepySpec extends Specification {
           update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET a = ?, i = ?, j = ?, k = ?, c = ?")
         }
         "two level nesting" in {
-          update[ATable].set[ETable].apply() mustEqual Valid("UPDATE ATable SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?")
+          update[ATable].set[ETable].apply() mustEqual Valid(
+            "UPDATE ATable SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?"
+          )
         }
       }
 

@@ -2,7 +2,6 @@ package prepy.syntax.elements
 
 import cats.data.Validated.Invalid
 import prepy.Domain
-import prepy.visitor.QueryVisitor
 import shapeless.Typeable
 
 private[prepy] trait UpdateSyntax extends WhereSyntax {
@@ -11,7 +10,7 @@ private[prepy] trait UpdateSyntax extends WhereSyntax {
     `updateT`(typeable.describe)
 
   private[prepy] case class `updateT`(tableName: String) extends QueryElement {
-    override def apply(implicit visitor: QueryVisitor) =
+    override def apply() =
       Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[T]`")
 
     def set[T](implicit domain: Domain[T]): `setT` = `setT`(this, domain.fields)

@@ -1,11 +1,10 @@
 package prepy.syntax.elements
 
 import cats.data.Validated
-import prepy.visitor.QueryVisitor
-import prepy.visitor.impl.StringQueryVisitor
+import cats.data.Validated.Valid
+import prepy.interpreter.StringQueryInterpreter
 
 private[prepy] trait QueryElement { self =>
 
-  def apply(implicit visitor: QueryVisitor = StringQueryVisitor): Validated[String, visitor.Out] =
-    visitor.apply(self)
+  def apply(): Validated[String, String] = Valid(self.toString)
 }
