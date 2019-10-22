@@ -15,7 +15,7 @@ private[prepy] trait UpdateSyntax extends WhereSyntax {
   }
 
   private[prepy] case class `setT`(queryElement: QueryElement, fields: List[Symbol]) extends QueryElement {
-    def where(conditions: String*): `whereT` = `whereT`(this, conditions.toList)
+    def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String =
       s"$queryElement SET ${fields.map(field => s"${field.name} = ?").mkString(", ")}"

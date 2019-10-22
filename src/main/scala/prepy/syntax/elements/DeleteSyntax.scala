@@ -8,7 +8,7 @@ private[prepy] trait DeleteSyntax extends WhereSyntax {
     `deleteT`(typeable.describe)
 
   private[prepy] case class `deleteT`(tableName: String) extends QueryElement {
-    def where(condition: String*): `whereT` = `whereT`(this, condition.toList)
+    def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String = s"DELETE FROM $tableName"
   }

@@ -14,7 +14,7 @@ private[prepy] trait SelectSyntax extends WhereSyntax {
   }
 
   private[prepy] case class `fromT`(queryElement: QueryElement, tableName: String) extends QueryElement {
-    def where(conditions: String*): `whereT` = `whereT`(this, conditions.toList)
+    def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String = s"$queryElement FROM $tableName"
   }

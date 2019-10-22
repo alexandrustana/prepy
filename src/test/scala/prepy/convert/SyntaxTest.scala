@@ -14,7 +14,7 @@ class SyntaxTest extends Specification {
       sql === "SELECT i, j FROM Test"
     }
     "complex" in {
-      val sql = select[Test].from[Test].where("1 == 1", "1 == 2").apply()
+      val sql = select[Test].from[Test].where("1 == 1").and("1 == 2").apply()
       sql === "SELECT i, j FROM Test WHERE (1 == 1) AND (1 == 2)"
     }
   }
