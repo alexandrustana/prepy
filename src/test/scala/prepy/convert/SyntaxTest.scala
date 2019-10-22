@@ -3,6 +3,7 @@ package prepy.convert
 import org.specs2.mutable._
 import prepy.syntax._
 import prepy.Domain.implicits._
+import prepy.visitor.impl.DoobieQueryVisitor
 
 class SyntaxTest extends Specification {
   case class Test(i: Int, j: Boolean)
@@ -43,6 +44,15 @@ class SyntaxTest extends Specification {
       val sql = update[Test].set[Test].where("1 == 1").apply()
 
       sql === "UPDATE Test SET i = ?, j = ? WHERE (1 == 1)"
+    }
+  }
+
+  "Doobie" should {
+    "work" in {
+      implicit val d = DoobieQueryVisitor
+      val s = select[Test].from[Test].apply()
+
+      s === "SELECT i, j FROM Test"
     }
   }
 }

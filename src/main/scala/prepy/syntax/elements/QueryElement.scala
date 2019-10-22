@@ -4,5 +4,5 @@ import prepy.visitor.QueryVisitor
 import prepy.visitor.impl.StringQueryVisitor
 
 private[prepy] trait QueryElement { self =>
-  def apply(implicit visitor: QueryVisitor = StringQueryVisitor): visitor.Out = visitor.apply(self)
+  def apply(implicit visitor: QueryVisitor = StringQueryVisitor): QueryVisitor#Out = visitor.apply(self)
 }

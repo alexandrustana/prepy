@@ -6,5 +6,5 @@ import prepy.visitor.QueryVisitor
 object StringQueryVisitor extends QueryVisitor{
   override type Out = String
 
-  override def apply(elem: QueryElement): String = elem.toString
+  override def apply(elem: QueryElement): Out = elem.toString
 }
