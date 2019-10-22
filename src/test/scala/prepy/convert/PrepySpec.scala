@@ -7,14 +7,18 @@ import prepy.syntax._
 import prepy.implicits._
 
 class PrepySpec extends Specification {
-  case class Test(i: Int, j: Boolean)
+
+  case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
+
+  case class BTable(i: Int, j: Boolean, k: String)
+
+  case class CTable(i: Int, l: Char, o: List[Int], p: Option[Float])
+
+  case class DTable(a: Int, b: BTable, c: String)
+
+  case class ETable(d: Int, e: DTable, f: String)
 
   "select" should {
-    case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
-    case class BTable(i: Int, j: Boolean, k: String)
-    case class CTable(i: Int, l: Char, o:    List[Int], p: Option[Float])
-    case class DTable(a: Int, b: BTable, c:  String)
-    case class ETable(d: Int, e: DTable, f:  String)
 
     "be equal" in {
       "select * query" in {
@@ -101,4 +105,60 @@ class PrepySpec extends Specification {
     }
   }
 
+  "delete" should {
+    "be equal" in {
+      "delete from" in {
+        "without condition" in {
+          delete[ATable].apply() mustEqual Valid("DELETE FROM ATable")
+        }
+        "with single condition" in {
+          delete[ATable]
+            .where("i == 1")
+            .apply() mustEqual Valid("DELETE FROM ATable WHERE (i == 1)")
+        }
+
+        "with multiple conditions" in {
+          "single AND condition" in {
+            delete[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .apply() mustEqual Valid("DELETE FROM ATable WHERE (i == 1) AND (j == TRUE)")
+          }
+          "multiple AND conditions" in {
+            delete[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .and("k LIKE '%foo%'")
+              .apply() mustEqual Valid(
+              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+            )
+          }
+          "single OR condition" in {
+            delete[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .apply() mustEqual Valid("DELETE FROM ATable WHERE (i == 1) OR (j == TRUE)")
+          }
+          "multiple OR conditions" in {
+            delete[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .apply() mustEqual Valid(
+              "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+            )
+          }
+          "mixed AND with OR conditions" in {
+            delete[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .apply() mustEqual Valid(
+              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+            )
+          }
+        }
+      }
+    }
+  }
 }
