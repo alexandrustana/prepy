@@ -4,7 +4,7 @@ import cats.data.Validated.{Invalid, Valid}
 import cats.implicits._
 import org.specs2.mutable._
 import prepy.syntax._
-import prepy.Domain.implicits._
+import prepy.implicits._
 
 class PrepySpec extends Specification {
   case class Test(i: Int, j: Boolean)
