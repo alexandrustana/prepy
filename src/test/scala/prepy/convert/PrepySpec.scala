@@ -184,4 +184,91 @@ class PrepySpec extends Specification {
       insert[ATable].apply() mustEqual Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values`")
     }
   }
+
+  "update" should {
+
+    "be equal" in {
+      "update all query" in {
+        "without condition" in {
+          update[ATable].set[ATable].apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?")
+        }
+
+        "with single condition" in {
+          update[ATable]
+            .set[ATable]
+            .where("i == 1")
+            .apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)")
+        }
+
+        "with multiple conditions" in {
+          "single AND condition" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)")
+          }
+          "multiple AND conditions" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .and("k LIKE '%foo%'")
+              .apply() mustEqual Valid(
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+            )
+          }
+          "single OR condition" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)")
+          }
+          "multiple OR conditions" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .apply() mustEqual Valid(
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+            )
+          }
+          "mixed AND with OR conditions" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .apply() mustEqual Valid(
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+            )
+          }
+        }
+      }
+
+      "update subset query" in {
+        "first three fields" in {
+          update[ATable].set[BTable].apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?")
+        }
+        "random fields" in {
+          update[ATable].set[CTable].apply() mustEqual Valid("UPDATE ATable SET i = ?, l = ?, o = ?, p = ?")
+        }
+      }
+
+      "update from nested product" in {
+        "one level nesting" in {
+          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET a = ?, i = ?, j = ?, k = ?, c = ?")
+        }
+        "two level nesting" in {
+          update[ATable].set[ETable].apply() mustEqual Valid("UPDATE ATable SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?")
+        }
+      }
+
+    }
+    "be invalid" in {
+      update[ATable].apply() mustEqual Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[T]`")
+    }
+  }
 }
