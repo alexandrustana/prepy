@@ -10,7 +10,7 @@ private[prepy] trait SelectSyntax extends WhereSyntax {
 
   def select(): `selectT` = `selectT`(List(Symbol("*")))
 
-  private[prepy] case class `selectT`(fields: List[Symbol]) extends QueryElement {
+  private[syntax] case class `selectT`(fields: List[Symbol]) extends QueryElement {
 
     override def apply() =
       Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[T]`")
@@ -20,7 +20,7 @@ private[prepy] trait SelectSyntax extends WhereSyntax {
     override def toString: String = s"SELECT ${fields.map(_.name).mkString(", ")}"
   }
 
-  private[prepy] case class `fromT`(queryElement: QueryElement, tableName: String) extends QueryElement {
+  private[syntax] case class `fromT`(queryElement: QueryElement, tableName: String) extends QueryElement {
     def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String = s"$queryElement FROM $tableName"

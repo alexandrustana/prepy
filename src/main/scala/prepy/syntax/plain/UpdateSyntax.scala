@@ -9,7 +9,7 @@ private[prepy] trait UpdateSyntax extends WhereSyntax {
   def update[T <: Product](implicit typeable: Typeable[T]): `updateT` =
     `updateT`(typeable.describe)
 
-  private[prepy] case class `updateT`(tableName: String) extends QueryElement {
+  private[syntax] case class `updateT`(tableName: String) extends QueryElement {
     override def apply() =
       Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[T]`")
 
@@ -18,7 +18,7 @@ private[prepy] trait UpdateSyntax extends WhereSyntax {
     override def toString: String = s"UPDATE $tableName"
   }
 
-  private[prepy] case class `setT`(queryElement: QueryElement, fields: List[Symbol]) extends QueryElement {
+  private[syntax] case class `setT`(queryElement: QueryElement, fields: List[Symbol]) extends QueryElement {
     def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String =
