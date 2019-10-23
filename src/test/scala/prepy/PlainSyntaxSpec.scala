@@ -6,7 +6,7 @@ import prepy.syntax._
 import prepy.implicits._
 import shapeless.cachedImplicit
 
-class PrepySpec extends Specification {
+class PlainSyntaxSpec extends Specification {
 
   case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
   case class BTable(i: Int, j: Boolean, k: String)
@@ -23,7 +23,7 @@ class PrepySpec extends Specification {
   "select" should {
 
     "be equal" in {
-      "select * query" in {
+      "select query" in {
         "without condition" in {
           select[ATable].from[ATable].apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM ATable")
         }
@@ -81,6 +81,10 @@ class PrepySpec extends Specification {
             )
           }
         }
+      }
+
+      "select * query" in {
+        select().from[ATable].apply() mustEqual Valid("SELECT * FROM ATable")
       }
 
       "select subset query" in {
