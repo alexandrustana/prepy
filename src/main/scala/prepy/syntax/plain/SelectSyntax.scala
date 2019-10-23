@@ -8,8 +8,6 @@ private[prepy] trait SelectSyntax extends WhereSyntax {
 
   def select[T <: Product](implicit inst: Domain[T]): `selectT` = `selectT`(inst.fields)
 
-  def select(): `selectT` = `selectT`(List(Symbol("*")))
-
   private[syntax] case class `selectT`(fields: List[Symbol]) extends QueryElement {
 
     override def apply() =

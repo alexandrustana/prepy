@@ -83,10 +83,6 @@ class PlainSyntaxSpec extends Specification {
         }
       }
 
-      "select * query" in {
-        select().from[ATable].apply() mustEqual Valid("SELECT * FROM ATable")
-      }
-
       "select subset query" in {
         "first three fields" in {
           select[BTable].from[ATable].apply() mustEqual Valid("SELECT i, j, k FROM ATable")
