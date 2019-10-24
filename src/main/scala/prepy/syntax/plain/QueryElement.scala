@@ -5,5 +5,5 @@ import cats.data.Validated.Valid
 
 private[prepy] trait QueryElement { self =>
 
-  def apply(): Validated[String, _]
+  def apply[T](): Validated[String, _]
 }

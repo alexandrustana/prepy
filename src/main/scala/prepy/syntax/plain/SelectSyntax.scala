@@ -14,7 +14,7 @@ private[prepy] trait SelectSyntax {
 
 object SelectSyntax {
   abstract private[syntax] class `selectT`(fields: List[Symbol], factory: SelectFactory) extends QueryElement {
-    override def apply() =
+    override def apply[_]() =
       Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[T]`")
 
     def from[T](implicit typeable: Typeable[T]): SelectSyntax.`fromT` =
