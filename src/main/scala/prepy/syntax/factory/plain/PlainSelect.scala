@@ -7,11 +7,11 @@ import prepy.syntax.plain
 import prepy.syntax.plain.{QueryElement, SelectSyntax}
 
 trait PlainSelect extends SelectFactory {
-  override def `selectT`(fields: List[Symbol], factory: SelectFactory): SelectSyntax.`selectT` =
-    new plain.SelectSyntax.`selectT`(fields, factory) {}
+  override def `selectT`[T <: Product](fields: List[Symbol], factory: SelectFactory): SelectSyntax.`selectT`[T] =
+    new SelectSyntax.`selectT`[T](fields, factory) {}
 
-  override def `fromT`(elem: QueryElement, tableName: String, factory: SelectFactory): SelectSyntax.`fromT` =
-    new SelectSyntax.`fromT`(elem, tableName, factory) {
+  override def `fromT`[T <: Product](elem: QueryElement, tableName: String, factory: SelectFactory): SelectSyntax.`fromT`[T] =
+    new SelectSyntax.`fromT`[T](elem, tableName, factory) {
       override def apply(): Validated[String, _] = Valid(toString)
     }
 
