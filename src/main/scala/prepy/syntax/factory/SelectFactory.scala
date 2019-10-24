@@ -1,6 +1,6 @@
 package prepy.syntax.factory
 
-import prepy.syntax.plain.{QueryElement, SelectSyntax}
+import prepy.syntax.ast.{QueryElement, SelectSyntax}
 
 trait SelectFactory extends GenericFactory {
   def `selectT`[T <: Product](fields: List[Symbol], factory:   SelectFactory): SelectSyntax.`selectT`[T]

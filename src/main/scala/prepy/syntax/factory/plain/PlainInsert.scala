@@ -4,8 +4,8 @@ import cats.data.Validated
 import cats.data.Validated.Valid
 import prepy.syntax
 import prepy.syntax.factory.{DeleteFactory, InsertFactory}
-import prepy.syntax.plain
-import prepy.syntax.plain.{DeleteSyntax, InsertSyntax, QueryElement}
+import prepy.syntax.ast
+import prepy.syntax.ast.{DeleteSyntax, InsertSyntax, QueryElement}
 
 trait PlainInsert extends InsertFactory {
   override def `insertT`(tableName: String, factory: InsertFactory): InsertSyntax.`insertT` =

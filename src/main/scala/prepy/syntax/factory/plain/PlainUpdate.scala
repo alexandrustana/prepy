@@ -3,7 +3,7 @@ package prepy.syntax.factory.plain
 import cats.data.Validated
 import cats.data.Validated.Valid
 import prepy.syntax.factory.{SelectFactory, UpdateFactory}
-import prepy.syntax.plain.{QueryElement, SelectSyntax, UpdateSyntax}
+import prepy.syntax.ast.{QueryElement, SelectSyntax, UpdateSyntax}
 
 trait PlainUpdate extends UpdateFactory {
   override def `updateT`(tableName: String, factory: UpdateFactory): UpdateSyntax.`updateT` =

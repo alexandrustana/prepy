@@ -1,6 +1,6 @@
 package prepy.syntax.factory
 
-import prepy.syntax.plain.{InsertSyntax, QueryElement}
+import prepy.syntax.ast.{InsertSyntax, QueryElement}
 
 trait InsertFactory extends GenericFactory {
   def `insertT`(tableName: String, factory: InsertFactory): InsertSyntax.`insertT`

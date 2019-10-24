@@ -3,7 +3,7 @@ package prepy.syntax.factory.plain
 import cats.data.Validated
 import cats.data.Validated.Valid
 import prepy.syntax.factory.DeleteFactory
-import prepy.syntax.plain.{DeleteSyntax, QueryElement}
+import prepy.syntax.ast.{DeleteSyntax, QueryElement}
 
 trait PlainDelete extends DeleteFactory {
   override def `deleteT`(tableName: String, factory: DeleteFactory): DeleteSyntax.`deleteT` =

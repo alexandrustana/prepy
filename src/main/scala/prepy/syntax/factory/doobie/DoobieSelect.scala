@@ -6,11 +6,11 @@ import doobie.util.Read
 import doobie.util.query.Query0
 import prepy.syntax.factory.SelectFactory
 import prepy.syntax.factory.plain.PlainSelect
-import prepy.syntax.plain.{QueryElement, SelectSyntax}
+import prepy.syntax.ast.{QueryElement, SelectSyntax}
 
 trait DoobieSelect extends PlainSelect {
 
-  def `fromT`[T <: Product: Read](
+  override def `fromT`[T <: Product: Read](
     elem:      QueryElement,
     tableName: String,
     factory:   SelectFactory

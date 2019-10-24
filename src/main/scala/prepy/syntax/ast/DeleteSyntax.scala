@@ -1,4 +1,4 @@
-package prepy.syntax.plain
+package prepy.syntax.ast
 
 import prepy.syntax.factory.DeleteFactory
 import shapeless.Typeable

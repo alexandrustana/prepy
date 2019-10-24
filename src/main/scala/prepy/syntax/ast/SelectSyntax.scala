@@ -1,4 +1,4 @@
-package prepy.syntax.plain
+package prepy.syntax.ast
 
 import cats.data.Validated.Invalid
 import prepy.Domain

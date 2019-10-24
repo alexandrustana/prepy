@@ -3,8 +3,8 @@ package prepy.syntax.factory.plain
 import cats.data.Validated
 import cats.data.Validated.Valid
 import prepy.syntax.factory.SelectFactory
-import prepy.syntax.plain
-import prepy.syntax.plain.{QueryElement, SelectSyntax}
+import prepy.syntax.ast
+import prepy.syntax.ast.{QueryElement, SelectSyntax}
 
 trait PlainSelect extends SelectFactory {
   override def `selectT`[T <: Product](fields: List[Symbol], factory: SelectFactory): SelectSyntax.`selectT`[T] =

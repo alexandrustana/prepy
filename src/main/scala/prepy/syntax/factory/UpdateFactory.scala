@@ -1,6 +1,6 @@
 package prepy.syntax.factory
 
-import prepy.syntax.plain.{QueryElement, SelectSyntax, UpdateSyntax}
+import prepy.syntax.ast.{QueryElement, SelectSyntax, UpdateSyntax}
 
 trait UpdateFactory extends GenericFactory {
   def `updateT`(tableName: String, factory: UpdateFactory): UpdateSyntax.`updateT`

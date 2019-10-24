@@ -1,6 +1,6 @@
 package prepy.syntax.factory
 
-import prepy.syntax.plain.{DeleteSyntax, QueryElement}
+import prepy.syntax.ast.{DeleteSyntax, QueryElement}
 
 trait DeleteFactory extends GenericFactory {
   def `deleteT`(tableName: String, factory:         DeleteFactory): DeleteSyntax.`deleteT`

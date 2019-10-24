@@ -106,7 +106,7 @@ class PlainSyntaxSpec extends Specification {
 
     }
     "be invalid" in {
-      select[ATable].apply() mustEqual Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[T]`")
+      select[ATable].apply() mustEqual Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[K]`")
     }
   }
 
