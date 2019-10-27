@@ -1,10 +1,11 @@
 package prepy
 
+import cats.Id
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
 import prepy.syntax._
 import prepy.implicits._
-import prepy.syntax.factory.plain.StringFactory
+import prepy.syntax.factory.impl.StringFactory
 import shapeless.cachedImplicit
 
 class PlainSyntaxSpec extends Specification {

@@ -5,6 +5,7 @@ import shapeless.labelled.FieldType
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
 package object implicits {
+
   private def pure[T](symbols: List[Symbol]): Domain[T] = new Domain[T] {
     override val fields: List[Symbol] = symbols
   }

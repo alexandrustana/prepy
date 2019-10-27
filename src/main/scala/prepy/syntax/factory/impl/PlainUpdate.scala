@@ -1,4 +1,4 @@
-package prepy.syntax.factory.plain
+package prepy.syntax.factory.impl
 
 import cats.data.Validated
 import cats.data.Validated.Valid
