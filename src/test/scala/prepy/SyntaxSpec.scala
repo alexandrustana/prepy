@@ -6,7 +6,7 @@ import org.specs2.mutable._
 import prepy.syntax._
 import shapeless.cachedImplicit
 
-class PlainSyntaxSpec extends Specification {
+class SyntaxSpec extends Specification {
 
   case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
   case class BTable(i: Int, j: Boolean, k: String)
