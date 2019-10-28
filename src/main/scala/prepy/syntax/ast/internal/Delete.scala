@@ -2,7 +2,7 @@ package prepy.syntax.ast.internal
 
 import shapeless.Typeable
 
-private[prepy] trait Delete {
+private[syntax] trait Delete {
 
   def delete[T <: Product](implicit typeable: Typeable[T]): Delete.`deleteT` =
     Delete.`deleteT`(typeable.describe)

@@ -4,7 +4,7 @@ import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
-trait Implicits {
+private[prepy] trait Implicits {
   type Domain[T <: Product] = Implicits.Domain[T]
 
   private def pure[T <: Product](symbols: List[Symbol]): Domain[T] = new Domain[T] {

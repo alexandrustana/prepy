@@ -4,7 +4,7 @@ import cats.data.Validated.Invalid
 import prepy.implicits.Implicits.Domain
 import shapeless.Typeable
 
-private[prepy] trait Select {
+private[syntax] trait Select {
 
   def select[T <: Product](implicit inst: Domain[T]): Select.`selectT` =
     Select.`selectT`(inst.fields)

@@ -4,7 +4,7 @@ import doobie.util.Write
 import doobie.util.update.Update0
 import prepy.syntax.ast.internal.Update
 
-trait DoobieUpdate {
+private[doobie] trait DoobieUpdate {
 
   implicit class valuesUpdateSyntax[T <: Product: Write](from: Update.`setT`) {
     def update(): Update0 = Update0(from.toString, None)

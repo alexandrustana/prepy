@@ -4,7 +4,7 @@ import doobie.util.Read
 import doobie.util.query.Query0
 import prepy.syntax.ast.internal.Select
 
-trait DoobieSelect {
+private[doobie] trait DoobieSelect {
 
   implicit class fromSyntax[T <: Product : Read](from: Select.`fromT`) {
     def query(): Query0[T] = Query0(from.toString)

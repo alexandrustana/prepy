@@ -4,7 +4,7 @@ import cats.data.Validated.Invalid
 import prepy.implicits.Implicits.Domain
 import shapeless.Typeable
 
-private[prepy] trait Update {
+private[syntax] trait Update {
 
   def update[T <: Product](implicit typeable: Typeable[T]): Update.`updateT` =
     Update.`updateT`(typeable.describe)
