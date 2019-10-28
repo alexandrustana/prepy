@@ -1,5 +1,6 @@
 package prepy
 
-import prepy.syntax.ast._
+import prepy.implicits.Implicits
+import prepy.syntax.ast.SQLSyntax
 
-package object syntax extends SelectSyntax with DeleteSyntax with InsertSyntax with UpdateSyntax {}
+package object syntax extends SQLSyntax with Implicits {}

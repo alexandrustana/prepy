@@ -1,12 +1,13 @@
-package prepy
+package prepy.implicits
 
 import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
-package object implicits {
+trait Implicits {
+  type Domain[T <: Product] = Implicits.Domain[T]
 
-  private def pure[T](symbols: List[Symbol]): Domain[T] = new Domain[T] {
+  private def pure[T <: Product](symbols: List[Symbol]): Domain[T] = new Domain[T] {
     override val fields: List[Symbol] = symbols
   }
 
@@ -36,7 +37,7 @@ package object implicits {
   }
 
   implicit def toDomain[
-    Entity,
+    Entity <: Product,
     EntityRepr <: HList,
     FlatEntityRepr <: HList,
     SymbolRepr <: HList,
@@ -48,5 +49,22 @@ package object implicits {
     fill:             FillWith[witnessPoly.type, FlatEntityRepr]
   ): Domain[Entity] = {
     pure(toList(fill()))
+  }
+}
+
+object Implicits {
+
+  trait Domain[T <: Product] {
+    type Entity = T
+
+    val fields: List[Symbol]
+
+    override def toString: String =
+      s"""COLUMNS : $fields
+         |""".stripMargin
+  }
+
+  object Domain {
+    def apply[T <: Product](implicit inst: Domain[T]): Domain[T] = inst
   }
 }

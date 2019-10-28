@@ -2,11 +2,8 @@ package prepy
 
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
-import prepy.syntax._
-import prepy.implicits._
-import prepy.syntax.factory.plain.PlainQuery
+import prepy.syntax.doobie._
 import shapeless.cachedImplicit
-import prepy.syntax.factory.doobie.DoobieQuery._
 
 class DoobieSyntaxSpec extends Specification {
 
@@ -25,7 +22,6 @@ class DoobieSyntaxSpec extends Specification {
   implicit val cDomain = cachedImplicit[Domain[CTable]]
   implicit val dDomain = cachedImplicit[Domain[DTable]]
   implicit val EDomain = cachedImplicit[Domain[ETable]]
-  implicit val factory = PlainQuery
 
   /*_*/
   "select" should {
@@ -114,7 +110,7 @@ class DoobieSyntaxSpec extends Specification {
 
     }
   }
-
+/*
   "delete" should {
     "be equal" in {
       "delete from" in {
@@ -285,5 +281,6 @@ class DoobieSyntaxSpec extends Specification {
 
     }
   }
+  */
   /*_*/
 }
