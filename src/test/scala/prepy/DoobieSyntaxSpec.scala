@@ -174,5 +174,116 @@ class DoobieSyntaxSpec extends Specification {
       }
     }
   }
+
+  "insert" should {
+    "be equal" in {
+      "insert all fields" in {
+        insert[ATable].values[ATable].update().sql mustEqual
+          "INSERT INTO ATable (i, j, k, l, m, n, o, p) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+      }
+      "insert all fields from nested product" in {
+        "one level nesting" in {
+          insert[DTable].values[DTable].update().sql mustEqual
+            "INSERT INTO DTable (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)"
+        }
+        "two level nesting" in {
+          insert[ETable].values[ETable].update().sql mustEqual
+            "INSERT INTO ETable (d, a, i, j, k, c, f) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        }
+      }
+    }
+  }
+
+  "update" should {
+
+    "be equal" in {
+      "update all query" in {
+        "without condition" in {
+          update[ATable].set[ATable].update().sql mustEqual
+            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?"
+        }
+
+        "with single condition" in {
+          update[ATable]
+            .set[ATable]
+            .where("i == 1")
+            .update()
+            .sql mustEqual
+            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)"
+        }
+
+        "with multiple conditions" in {
+          "single AND condition" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .update()
+              .sql mustEqual
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)"
+          }
+          "multiple AND conditions" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .and("k LIKE '%foo%'")
+              .update()
+              .sql mustEqual
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+          }
+          "single OR condition" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .update()
+              .sql mustEqual
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)"
+          }
+          "multiple OR conditions" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .update()
+              .sql mustEqual
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+          }
+          "mixed AND with OR conditions" in {
+            update[ATable]
+              .set[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .update()
+              .sql mustEqual
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+          }
+        }
+      }
+
+      "update subset query" in {
+        "first three fields" in {
+          update[ATable].set[BTable].update().sql mustEqual "UPDATE ATable SET i = ?, j = ?, k = ?"
+        }
+        "random fields" in {
+          update[ATable].set[CTable].update().sql mustEqual "UPDATE ATable SET i = ?, l = ?, o = ?, p = ?"
+        }
+      }
+
+      "update from nested product" in {
+        "one level nesting" in {
+          update[ATable].set[DTable].update().sql mustEqual "UPDATE ATable SET a = ?, i = ?, j = ?, k = ?, c = ?"
+        }
+        "two level nesting" in {
+          update[ATable].set[ETable].update().sql mustEqual
+            "UPDATE ATable SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?"
+        }
+      }
+
+    }
+  }
   /*_*/
 }

@@ -8,7 +8,7 @@ trait DoobieSelect {
   implicit class `fromT`[T <: Product: Read](from: SelectSyntax.`fromT`) {
     def query(): Query0[T] = Query0(from.toString)
   }
-  implicit class logicalOp(logicalOp: SelectSyntax.logicalOp) {
-    def query[T <: Product: Read](): Query0[T] = Query0(logicalOp.toString)
+  implicit class logicalOp[T <: Product: Read](logicalOp: SelectSyntax.logicalOp) {
+    def query(): Query0[T] = Query0(logicalOp.toString)
   }
 }
