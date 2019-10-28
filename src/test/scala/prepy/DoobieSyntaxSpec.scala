@@ -110,7 +110,7 @@ class DoobieSyntaxSpec extends Specification {
 
     }
   }
-/*
+
   "delete" should {
     "be equal" in {
       "delete from" in {
@@ -281,6 +281,5 @@ class DoobieSyntaxSpec extends Specification {
 
     }
   }
-  */
   /*_*/
 }

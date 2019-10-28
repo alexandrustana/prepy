@@ -9,7 +9,7 @@ private[prepy] trait Delete {
 }
 
 object Delete extends Where {
-  private[syntax] case class `deleteT`(tableName: String) extends Query {
+  private[syntax] case class `deleteT`(tableName: String) extends Query with Delete {
     def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String = s"DELETE FROM $tableName"
