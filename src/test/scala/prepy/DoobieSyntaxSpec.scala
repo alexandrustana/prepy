@@ -4,9 +4,9 @@ import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
 import prepy.syntax._
 import prepy.implicits._
-import prepy.syntax.factory.impl.StringFactory
+import prepy.syntax.factory.plain.PlainQuery
 import shapeless.cachedImplicit
-import prepy.syntax.factory.doobie.DoobieFactory._
+import prepy.syntax.factory.doobie.DoobieQuery._
 
 class DoobieSyntaxSpec extends Specification {
 
@@ -25,20 +25,22 @@ class DoobieSyntaxSpec extends Specification {
   implicit val cDomain = cachedImplicit[Domain[CTable]]
   implicit val dDomain = cachedImplicit[Domain[DTable]]
   implicit val EDomain = cachedImplicit[Domain[ETable]]
-  implicit val factory = StringFactory
+  implicit val factory = PlainQuery
 
   /*_*/
   "select" should {
+
     "be equal" in {
       "select query" in {
         "without condition" in {
-          select[ATable].from[ATable].doobie().sql mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable"
+          select[ATable].from[ATable].query().sql mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable"
         }
+
         "with single condition" in {
           select[ATable]
             .from[ATable]
             .where("i == 1")
-            .doobie()
+            .query()
             .sql mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1)"
         }
 
@@ -48,7 +50,7 @@ class DoobieSyntaxSpec extends Specification {
               .from[ATable]
               .where("i == 1")
               .and("j == TRUE")
-              .doobie()
+              .query()
               .sql mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE)"
           }
           "multiple AND conditions" in {
@@ -57,7 +59,7 @@ class DoobieSyntaxSpec extends Specification {
               .where("i == 1")
               .and("j == TRUE")
               .and("k LIKE '%foo%'")
-              .doobie()
+              .query()
               .sql mustEqual
               "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
           }
@@ -66,7 +68,7 @@ class DoobieSyntaxSpec extends Specification {
               .from[ATable]
               .where("i == 1")
               .or("j == TRUE")
-              .doobie()
+              .query()
               .sql mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) OR (j == TRUE)"
           }
           "multiple OR conditions" in {
@@ -75,7 +77,7 @@ class DoobieSyntaxSpec extends Specification {
               .where("i == 1")
               .or("j == TRUE")
               .or("k LIKE '%foo%'")
-              .doobie()
+              .query()
               .sql mustEqual
               "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
           }
@@ -85,10 +87,88 @@ class DoobieSyntaxSpec extends Specification {
               .where("i == 1")
               .and("j == TRUE")
               .or("k LIKE '%foo%'")
-              .doobie()
+              .query()
               .sql mustEqual
               "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+          }
+        }
+      }
 
+      "select subset query" in {
+        "first three fields" in {
+          select[BTable].from[ATable].query().sql mustEqual "SELECT i, j, k FROM ATable"
+        }
+        "random fields" in {
+          select[CTable].from[ATable].query().sql mustEqual "SELECT i, l, o, p FROM ATable"
+        }
+      }
+
+      "select * from nested product" in {
+        "one level nesting" in {
+          select[DTable].from[ATable].query().sql mustEqual "SELECT a, i, j, k, c FROM ATable"
+        }
+        "two level nesting" in {
+          select[ETable].from[ATable].query().sql mustEqual "SELECT d, a, i, j, k, c, f FROM ATable"
+        }
+      }
+
+    }
+  }
+
+  "delete" should {
+    "be equal" in {
+      "delete from" in {
+        "without condition" in {
+          delete[ATable].update().sql mustEqual "DELETE FROM ATable"
+        }
+        "with single condition" in {
+          delete[ATable]
+            .where("i == 1")
+            .update()
+            .sql mustEqual "DELETE FROM ATable WHERE (i == 1)"
+        }
+
+        "with multiple conditions" in {
+          "single AND condition" in {
+            delete[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .update()
+              .sql mustEqual "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE)"
+          }
+          "multiple AND conditions" in {
+            delete[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .and("k LIKE '%foo%'")
+              .update()
+              .sql mustEqual
+              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+          }
+          "single OR condition" in {
+            delete[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .update()
+              .sql mustEqual "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE)"
+          }
+          "multiple OR conditions" in {
+            delete[ATable]
+              .where("i == 1")
+              .or("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .update()
+              .sql mustEqual
+              "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+          }
+          "mixed AND with OR conditions" in {
+            delete[ATable]
+              .where("i == 1")
+              .and("j == TRUE")
+              .or("k LIKE '%foo%'")
+              .update()
+              .sql mustEqual
+              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
           }
         }
       }

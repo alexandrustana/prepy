@@ -5,7 +5,7 @@ import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
 import prepy.syntax._
 import prepy.implicits._
-import prepy.syntax.factory.impl.StringFactory
+import prepy.syntax.factory.plain.PlainQuery
 import shapeless.cachedImplicit
 
 class PlainSyntaxSpec extends Specification {
@@ -22,7 +22,7 @@ class PlainSyntaxSpec extends Specification {
   implicit val dDomain = cachedImplicit[Domain[DTable]]
   implicit val EDomain = cachedImplicit[Domain[ETable]]
 
-  implicit val factory = StringFactory
+  implicit val factory = PlainQuery
 
   "select" should {
 
