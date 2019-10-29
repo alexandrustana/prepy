@@ -1,28 +1,29 @@
 package prepy.syntax.ast.internal
 
 import cats.data.Validated.Invalid
+import prepy.formatter.{Formatter, IdentityFormatter}
 import shapeless.Typeable
 import prepy.implicits.Implicits.Domain
 
 private[prepy] trait Insert {
 
-  def insert[T <: Product](implicit typeable: Typeable[T]): Insert.`insertT` =
-    Insert.`insertT`(typeable.describe)
+  def insert[T <: Product](implicit typeable: Typeable[T], formatter: Formatter = IdentityFormatter): Insert.`insertT` =
+    Insert.`insertT`(typeable.describe, formatter)
 
 }
 
 object Insert {
-  private[syntax] case class `insertT`(tableName: String) extends Query {
+  private[syntax] case class `insertT`(tableName: String, formatter: Formatter) extends Query {
     override def apply() =
       Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values`")
 
-    def values[T <: Product](implicit inst: Domain[T]): `valuesT` = `valuesT`(this, inst.fields)
+    def values[T <: Product](implicit inst: Domain[T]): `valuesT` = `valuesT`(this, inst.fields, formatter)
 
-    override def toString: String = s"INSERT INTO $tableName"
+    override def toString: String = s"INSERT INTO ${formatter(tableName)}"
   }
 
-  private[syntax] case class `valuesT`(queryElement: Query, fields: List[Symbol]) extends Query {
+  private[syntax] case class `valuesT`(queryElement: Query, fields: List[Symbol], formatter: Formatter) extends Query {
     override def toString: String =
-      s"$queryElement ${fields.map(_.name).mkString("(", ", ", ")")} VALUES ${fields.map(_ => "?").mkString("(", ", ", ")")}"
+      s"$queryElement ${fields.map(_.name).map(formatter.apply).mkString("(", ", ", ")")} VALUES ${fields.map(_ => "?").mkString("(", ", ", ")")}"
   }
 }

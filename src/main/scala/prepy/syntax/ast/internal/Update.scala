@@ -1,31 +1,32 @@
 package prepy.syntax.ast.internal
 
 import cats.data.Validated.Invalid
+import prepy.formatter.{Formatter, IdentityFormatter}
 import prepy.implicits.Implicits.Domain
 import shapeless.Typeable
 
 private[syntax] trait Update {
 
-  def update[T <: Product](implicit typeable: Typeable[T]): Update.`updateT` =
-    Update.`updateT`(typeable.describe)
+  def update[T <: Product](implicit typeable: Typeable[T], formatter: Formatter = IdentityFormatter): Update.`updateT` =
+    Update.`updateT`(typeable.describe, formatter)
 
 }
 
 object Update extends Where {
 
-  private[syntax] case class `updateT`(tableName: String) extends Query {
+  private[syntax] case class `updateT`(tableName: String, formatter: Formatter) extends Query {
     override def apply() =
       Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[T]`")
 
-    def set[T <: Product](implicit domain: Domain[T]): `setT` = `setT`(this, domain.fields)
+    def set[T <: Product](implicit domain: Domain[T]): `setT` = `setT`(this, domain.fields, formatter)
 
-    override def toString: String = s"UPDATE $tableName"
+    override def toString: String = s"UPDATE ${formatter(tableName)}"
   }
 
-  private[syntax] case class `setT`(queryElement: Query, fields: List[Symbol]) extends Query {
+  private[syntax] case class `setT`(queryElement: Query, fields: List[Symbol], formatter: Formatter) extends Query {
     def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String =
-      s"$queryElement SET ${fields.map(field => s"${field.name} = ?").mkString(", ")}"
+      s"$queryElement SET ${fields.map(field => s"${formatter(field.name)} = ?").mkString(", ")}"
   }
 }
