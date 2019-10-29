@@ -6,12 +6,12 @@ import prepy.syntax.ast.internal.Select
 
 private[doobie] trait DoobieSelect {
 
-  implicit class fromSyntax[T <: Product : Read](from: Select.`fromT`) {
-    def query(): Query0[T] = Query0(from.toString)
+  implicit class fromSyntax[T <: Product: Read](elem: Select.`fromT`) {
+    def query(): Query0[T] = Query0(elem.toString)
   }
 
-  implicit class logicalOpSelectSyntax[T <: Product : Read](logicalOp: Select.logicalOp) {
-    def query(): Query0[T] = Query0(logicalOp.toString)
+  implicit class logicalOpSelectSyntax[T <: Product: Read](elem: Select.logicalOp) {
+    def query(): Query0[T] = Query0(elem.toString)
   }
 
 }
