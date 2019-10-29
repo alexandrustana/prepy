@@ -1,2 +1,2 @@
-# PREPY
+# prepy
 
