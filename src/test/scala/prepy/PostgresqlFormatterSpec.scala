@@ -8,11 +8,20 @@ import shapeless.cachedImplicit
 
 class PostgresqlFormatterSpec extends Specification {
 
-  case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
-  case class BTable(i: Int, j: Boolean, k: String)
-  case class CTable(i: Int, l: Char, o:    List[Int], p: Option[Float])
-  case class DTable(a: Int, b: BTable, c:  String)
-  case class ETable(d: Int, e: DTable, f:  String)
+  case class ATable(
+    iField: Int,
+    jField: Boolean,
+    kField: String,
+    lField: Char,
+    mField: Double,
+    nField: Double,
+    oField: List[Int],
+    pField: Option[Float]
+  )
+  case class BTable(iField: Int, jField: Boolean, kField: String)
+  case class CTable(iField: Int, lField: Char, oField:    List[Int], pField: Option[Float])
+  case class DTable(aField: Int, bField: BTable, cField:  String)
+  case class ETable(dField: Int, eField: DTable, fField:  String)
 
   implicit val aDomain = cachedImplicit[Domain[ATable]]
   implicit val bDomain = cachedImplicit[Domain[BTable]]
@@ -25,59 +34,67 @@ class PostgresqlFormatterSpec extends Specification {
     "be equal" in {
       "select query" in {
         "without condition" in {
-          select[ATable].from[ATable].apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM a_table")
+          select[ATable].from[ATable].apply() mustEqual Valid(
+            "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table"
+          )
         }
 
         "with single condition" in {
           select[ATable]
             .from[ATable]
-            .where("i == 1")
-            .apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM a_table WHERE (i == 1)")
+            .where("i_field == 1")
+            .apply() mustEqual Valid(
+            "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1)"
+          )
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM a_table WHERE (i == 1) AND (j == TRUE)")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .apply() mustEqual Valid(
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) AND (j_field == TRUE)"
+            )
           }
           "multiple AND conditions" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .and("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "SELECT i, j, k, l, m, n, o, p FROM a_table WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) AND (k_field LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM a_table WHERE (i == 1) OR (j == TRUE)")
+              .where("i_field == 1")
+              .or("j_field == TRUE")
+              .apply() mustEqual Valid(
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) OR (j_field == TRUE)"
+            )
           }
           "multiple OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .or("j_field == TRUE")
+              .or("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "SELECT i, j, k, l, m, n, o, p FROM a_table WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) OR (j_field == TRUE) OR (k_field LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .or("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "SELECT i, j, k, l, m, n, o, p FROM a_table WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) OR (k_field LIKE '%foo%')"
             )
           }
         }
@@ -85,19 +102,23 @@ class PostgresqlFormatterSpec extends Specification {
 
       "select subset query" in {
         "first three fields" in {
-          select[BTable].from[ATable].apply() mustEqual Valid("SELECT i, j, k FROM a_table")
+          select[BTable].from[ATable].apply() mustEqual Valid("SELECT i_field, j_field, k_field FROM a_table")
         }
         "random fields" in {
-          select[CTable].from[ATable].apply() mustEqual Valid("SELECT i, l, o, p FROM a_table")
+          select[CTable].from[ATable].apply() mustEqual Valid("SELECT i_field, l_field, o_field, p_field FROM a_table")
         }
       }
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].apply() mustEqual Valid("SELECT a, i, j, k, c FROM a_table")
+          select[DTable].from[ATable].apply() mustEqual Valid(
+            "SELECT a_field, i_field, j_field, k_field, c_field FROM a_table"
+          )
         }
         "two level nesting" in {
-          select[ETable].from[ATable].apply() mustEqual Valid("SELECT d, a, i, j, k, c, f FROM a_table")
+          select[ETable].from[ATable].apply() mustEqual Valid(
+            "SELECT d_field, a_field, i_field, j_field, k_field, c_field, f_field FROM a_table"
+          )
         }
       }
 
@@ -115,48 +136,48 @@ class PostgresqlFormatterSpec extends Specification {
         }
         "with single condition" in {
           delete[ATable]
-            .where("i == 1")
-            .apply() mustEqual Valid("DELETE FROM a_table WHERE (i == 1)")
+            .where("i_field == 1")
+            .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field == 1)")
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i == 1) AND (j == TRUE)")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field == 1) AND (j_field == TRUE)")
           }
           "multiple AND conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .and("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "DELETE FROM a_table WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "DELETE FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) AND (k_field LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             delete[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i == 1) OR (j == TRUE)")
+              .where("i_field == 1")
+              .or("j_field == TRUE")
+              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field == 1) OR (j_field == TRUE)")
           }
           "multiple OR conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .or("j_field == TRUE")
+              .or("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "DELETE FROM a_table WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "DELETE FROM a_table WHERE (i_field == 1) OR (j_field == TRUE) OR (k_field LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .or("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "DELETE FROM a_table WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "DELETE FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) OR (k_field LIKE '%foo%')"
             )
           }
         }
@@ -168,18 +189,18 @@ class PostgresqlFormatterSpec extends Specification {
     "be equal" in {
       "insert all fields" in {
         insert[ATable].values[ATable].apply() mustEqual Valid(
-          "INSERT INTO a_table (i, j, k, l, m, n, o, p) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO a_table (i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         )
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
           insert[DTable].values[DTable].apply() mustEqual Valid(
-            "INSERT INTO d_table (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO d_table (a_field, i_field, j_field, k_field, c_field) VALUES (?, ?, ?, ?, ?)"
           )
         }
         "two level nesting" in {
           insert[ETable].values[ETable].apply() mustEqual Valid(
-            "INSERT INTO e_table (d, a, i, j, k, c, f) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO e_table (d_field, a_field, i_field, j_field, k_field, c_field, f_field) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
       }
@@ -195,16 +216,16 @@ class PostgresqlFormatterSpec extends Specification {
       "update all query" in {
         "without condition" in {
           update[ATable].set[ATable].apply() mustEqual Valid(
-            "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?"
+            "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ?"
           )
         }
 
         "with single condition" in {
           update[ATable]
             .set[ATable]
-            .where("i == 1")
+            .where("i_field == 1")
             .apply() mustEqual Valid(
-            "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)"
+            "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1)"
           )
         }
 
@@ -212,49 +233,49 @@ class PostgresqlFormatterSpec extends Specification {
           "single AND condition" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) AND (j_field == TRUE)"
             )
           }
           "multiple AND conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .and("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) AND (j_field == TRUE) AND (k_field LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
+              .where("i_field == 1")
+              .or("j_field == TRUE")
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) OR (j_field == TRUE)"
             )
           }
           "multiple OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .or("j_field == TRUE")
+              .or("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) OR (j_field == TRUE) OR (k_field LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("i_field == 1")
+              .and("j_field == TRUE")
+              .or("k_field LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) AND (j_field == TRUE) OR (k_field LIKE '%foo%')"
             )
           }
         }
@@ -262,20 +283,24 @@ class PostgresqlFormatterSpec extends Specification {
 
       "update subset query" in {
         "first three fields" in {
-          update[ATable].set[BTable].apply() mustEqual Valid("UPDATE a_table SET i = ?, j = ?, k = ?")
+          update[ATable].set[BTable].apply() mustEqual Valid("UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?")
         }
         "random fields" in {
-          update[ATable].set[CTable].apply() mustEqual Valid("UPDATE a_table SET i = ?, l = ?, o = ?, p = ?")
+          update[ATable].set[CTable].apply() mustEqual Valid(
+            "UPDATE a_table SET i_field = ?, l_field = ?, o_field = ?, p_field = ?"
+          )
         }
       }
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE a_table SET a = ?, i = ?, j = ?, k = ?, c = ?")
+          update[ATable].set[DTable].apply() mustEqual Valid(
+            "UPDATE a_table SET a_field = ?, i_field = ?, j_field = ?, k_field = ?, c_field = ?"
+          )
         }
         "two level nesting" in {
           update[ATable].set[ETable].apply() mustEqual Valid(
-            "UPDATE a_table SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?"
+            "UPDATE a_table SET d_field = ?, a_field = ?, i_field = ?, j_field = ?, k_field = ?, c_field = ?, f_field = ?"
           )
         }
       }
