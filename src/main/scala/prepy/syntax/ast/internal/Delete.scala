@@ -10,7 +10,7 @@ private[syntax] trait Delete {
 }
 
 object Delete extends Where {
-  private[syntax] case class `deleteT`(tableName: String, formatter: Formatter) extends Query with Delete {
+  private[syntax] case class `deleteT`(tableName: String, formatter: Formatter) extends Query {
     def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String = s"DELETE FROM ${formatter(tableName)}"

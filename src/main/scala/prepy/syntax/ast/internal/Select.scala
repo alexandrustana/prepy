@@ -13,7 +13,7 @@ private[syntax] trait Select {
 }
 
 object Select extends Where {
-  private[syntax] case class `selectT`(fields: List[Symbol], formatter: Formatter) extends Query with Select {
+  private[syntax] case class `selectT`(fields: List[Symbol], formatter: Formatter) extends Query {
     override def apply() =
       Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[K]`")
 
@@ -27,7 +27,7 @@ object Select extends Where {
     queryElement: Query,
     tableName:    String,
     formatter:    Formatter
-  ) extends Query with Select {
+  ) extends Query {
     def where(condition: String): `whereT` = `whereT`(this, condition)
 
     override def toString: String = s"$queryElement FROM ${formatter(tableName)}"
