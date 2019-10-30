@@ -16,14 +16,13 @@ private[prepy] trait Implicits {
       implicit
       witness: Witness.Aux[K]
     ): Case.Aux[FieldType[K, V], K :: HNil] = {
-      at[FieldType[K, V]](t => witness.value :: HNil)
+      at[FieldType[K, V]](_ => witness.value :: HNil)
     }
   }
 
   object complexPoly extends primitivePoly {
     implicit def complex[K <: Symbol, V <: Product, GenV <: HList, FlatV <: HList](
       implicit
-      witness: Witness.Aux[K],
       gen:     LabelledGeneric.Aux[V, GenV],
       flatten: FlatMapper.Aux[complexPoly.type, GenV, FlatV]
     ): Case.Aux[FieldType[K, V], FlatV] = {
