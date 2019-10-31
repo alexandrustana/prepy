@@ -12,7 +12,7 @@ object Compiler {
   lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % "0.3.1"
 
   lazy val organizationName: String = "com.alexandrustana"
-  lazy val prepyHomepage: String = "https://github.com/alexandrustana/prepy"
+  lazy val prepyHomepage:    String = "https://github.com/alexandrustana/prepy"
 
   def commonSettings: Seq[Setting[_]] =
     Seq(
@@ -77,7 +77,8 @@ object Compiler {
     "-Ywarn-unused:patvars",            // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates",           // Warn if a private member is unused.
     "-Ywarn-value-discard",             // Warn when non-Unit expression results are unused.
-    "-Ypartial-unification"             // Enable partial unification in type constructor inference
+    "-Ypartial-unification",            // Enable partial unification in type constructor inference
+    "-Ywarn-macros:after"               // Remove false positives of unused implicit val
   )
 
   /**
@@ -119,7 +120,8 @@ object Compiler {
     "-Ywarn-unused:params",          // Warn if a value parameter is unused.
     "-Ywarn-unused:patvars",         // Warn if a variable bound in a pattern is unused.
     "-Ywarn-unused:privates",        // Warn if a private member is unused.
-    "-Ywarn-value-discard"           // Warn when non-Unit expression results are unused.
+    "-Ywarn-value-discard",          // Warn when non-Unit expression results are unused.
+    "-Ywarn-macros:after"            // Remove false positives of unused implicit val
   )
 
   /**
@@ -127,9 +129,9 @@ object Compiler {
     * https://github.com/oleg-py/better-monadic-for
     */
   def betterForPluginCompilerFlags: Seq[String] = Seq(
-    "-P:bm4:no-filtering:y",      // see https://github.com/oleg-py/better-monadic-for#desugaring-for-patterns-without-withfilters--pbm4no-filteringy
-    "-P:bm4:no-map-id:y",         // see https://github.com/oleg-py/better-monadic-for#final-map-optimization--pbm4no-map-idy
-    "-P:bm4:no-tupling:y",        // see https://github.com/oleg-py/better-monadic-for#desugar-bindings-as-vals-instead-of-tuples--pbm4no-tuplingy
-    "-P:bm4:implicit-patterns:y"  //see https://github.com/oleg-py/better-monadic-for#define-implicits-in-for-comprehensions-or-matches
+    "-P:bm4:no-filtering:y",     // see https://github.com/oleg-py/better-monadic-for#desugaring-for-patterns-without-withfilters--pbm4no-filteringy
+    "-P:bm4:no-map-id:y",        // see https://github.com/oleg-py/better-monadic-for#final-map-optimization--pbm4no-map-idy
+    "-P:bm4:no-tupling:y",       // see https://github.com/oleg-py/better-monadic-for#desugar-bindings-as-vals-instead-of-tuples--pbm4no-tuplingy
+    "-P:bm4:implicit-patterns:y" //see https://github.com/oleg-py/better-monadic-for#define-implicits-in-for-comprehensions-or-matches
   )
 }

@@ -13,7 +13,7 @@ object PostgresqlFormatter extends Formatter {
             if (acc.isEmpty) c.toLower else s"_${c.toLower}"
           }
           else c
-        } + acc
+        }.toString + acc
       }
     if (temp.startsWith("_")) temp.tail
     else temp
