@@ -38,6 +38,7 @@
         <parameter value="-Ywarn-unused:patvars" />
         <parameter value="-Ywarn-unused:privates" />
         <parameter value="-Ywarn-value-discard" />
+        <parameter value="-Ywarn-macros:after" />
         <parameter value="-P:bm4:no-filtering:y" />
         <parameter value="-P:bm4:no-map-id:y" />
         <parameter value="-P:bm4:no-tupling:y" />
