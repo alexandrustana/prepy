@@ -1,6 +1,7 @@
 package prepy
 
 import doobie.util.Meta
+import doobie.util.query.Query0
 import org.specs2.mutable._
 import prepy.syntax.doobie._
 import shapeless.cachedImplicit

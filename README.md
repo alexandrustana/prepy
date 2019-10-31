@@ -12,7 +12,7 @@ Generates string sql queries based on the structure of case classes, this minimi
 
  1. quick transformation to sql. e.g. `select[A].from[A].apply()`
 
- 2. avoid writing faulty queries. e.g. `update[A].values[A].where("id == 1").apply()`
+ 2. avoid writing faulty queries. e.g. `update[A].set[A].where("id == 1").apply()`
 
 ### `prepy.syntax.doobie`
 
@@ -25,7 +25,7 @@ Prepy is available on Scala 2.12, 2.13
 
 ```scala
 
- libraryDependencies += "com.alexandrustana" %% "prepy" % "0.0.1"
+ libraryDependencies += "com.github.alexandrustana" %% "prepy" % "0.0.1"
 
 ```
 
@@ -61,13 +61,21 @@ select[UserName].apply()
 // res0: cats.data.Validated.Invalid[String] = Invalid(Incomplete SQL query. `select[T]` must be followed by a `from[K]`)
 ```
 
-Support postgresql automatic formatter
+Support PostgreSQL automatic formatter
 ```scala
 import prepy.syntax._
 import prepy.formatter.postgresql._
 
 update[UserTable].set[UserName].apply()
 //res0: cats.data.Validated[String,String] = Valid(UPDATE user_table SET id = ?, first_name = ?, last_name = ?)
+```
+
+Doobie seamless integration 
+```scala
+import prepy.syntax.doobie._
+
+select[UserName].from[UserTable].query()
+//res0: doobie.util.query.Query0[UserTable] = doobie.util.query$Query$$anon$3@69d4503e
 ```
 
 ### Other examples can be found in [tests](src/test/scala/prepy/)
