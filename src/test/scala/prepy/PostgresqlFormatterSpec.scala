@@ -206,7 +206,7 @@ class PostgresqlFormatterSpec extends Specification {
       }
     }
     "be invalid" in {
-      insert[ATable].apply() mustEqual Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values`")
+      insert[ATable].apply() mustEqual Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`")
     }
   }
 
@@ -307,7 +307,7 @@ class PostgresqlFormatterSpec extends Specification {
 
     }
     "be invalid" in {
-      update[ATable].apply() mustEqual Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[T]`")
+      update[ATable].apply() mustEqual Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[K]`")
     }
   }
 }

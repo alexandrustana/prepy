@@ -1,6 +1,6 @@
 package prepy
 
-import cats.data.Validated.{Invalid, Valid}
+import doobie.util.Meta
 import org.specs2.mutable._
 import prepy.syntax.doobie._
 import shapeless.cachedImplicit
@@ -23,7 +23,9 @@ class DoobieSyntaxSpec extends Specification {
   implicit val dDomain = cachedImplicit[Domain[DTable]]
   implicit val EDomain = cachedImplicit[Domain[ETable]]
 
-  /*_*/
+  implicit val intListMeta:     Meta[List[Int]] = Meta[String].timap(arr => arr.split(",").map(_.toInt).toList)(_.mkString(","))
+  implicit val optionFloatMeta: Meta[Char]      = Meta[String].timap(_.charAt(0))(_.toString)
+
   "select" should {
 
     "be equal" in {
@@ -281,5 +283,4 @@ class DoobieSyntaxSpec extends Specification {
 
     }
   }
-  /*_*/
 }

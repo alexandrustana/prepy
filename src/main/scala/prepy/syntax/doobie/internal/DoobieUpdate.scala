@@ -6,11 +6,11 @@ import prepy.syntax.ast.internal.Update
 
 private[doobie] trait DoobieUpdate {
 
-  implicit class valuesUpdateSyntax[T <: Product: Write](elem: Update.`setT`) {
+  implicit class valuesUpdateSyntax[O](elem: Update.`setT`[_]{ type Out = O })(implicit write: Write[O]) {
     def update(): Update0 = Update0(elem.toString, None)
   }
 
-  implicit class logicalOpUpdateSyntax[T <: Product: Write](elem: Update.logicalOp) {
+  implicit class logicalOpUpdateSyntax[O](elem: Update.logicalOp[_]{ type Out = O })(implicit write: Write[O]) {
     def update(): Update0 = Update0(elem.toString, None)
   }
 }
