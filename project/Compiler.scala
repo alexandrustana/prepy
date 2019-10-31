@@ -11,7 +11,7 @@ object Compiler {
   //https://github.com/oleg-py/better-monadic-for/releases
   lazy val betterMonadicFor = "com.olegpy" %% "better-monadic-for" % "0.3.1"
 
-  lazy val organizationName: String = "com.alexandrustana"
+  lazy val organizationName: String = "com.github.alexandrustana"
   lazy val prepyHomepage:    String = "https://github.com/alexandrustana/prepy"
 
   def commonSettings: Seq[Setting[_]] =
