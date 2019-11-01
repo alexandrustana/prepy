@@ -100,8 +100,10 @@ class DoobieSyntaxSpec extends Specification {
           }
         }
 
-        "with interpolated condition" in {
-          val i = 1;
+        "with interpolated conditions" in {
+          val i = 1
+          val j = true
+          val k = "foo"
           "single condition" in {
             select[ATable]
               .from[ATable]
@@ -113,7 +115,6 @@ class DoobieSyntaxSpec extends Specification {
           }
 
           "multiple conditions" in {
-            val j = true
             "single AND condition" in {
               select[ATable]
                 .from[ATable]
@@ -123,7 +124,6 @@ class DoobieSyntaxSpec extends Specification {
                 .sql
                 .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?) AND (j == ?)"
             }
-            val k = "foo"
             "multiple AND conditions" in {
               select[ATable]
                 .from[ATable]
@@ -348,6 +348,77 @@ class DoobieSyntaxSpec extends Specification {
               .sql
               .trim mustEqual
               "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+          }
+        }
+
+        "with interpolated conditions" in {
+          val i = 1
+          val j = true
+          val k = "foo"
+          "single condition" in {
+            update[ATable]
+              .set[ATable]
+              .where(fr0"i == $i")
+              .update()
+              .sql
+              .trim mustEqual
+              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?)"
+          }
+
+          "multiple conditions" in {
+            "single AND condition" in {
+              update[ATable]
+                .set[ATable]
+                .where(fr0"i == $i")
+                .and(fr0"j == $j")
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) AND (j == ?)"
+            }
+            "multiple AND conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(fr0"i == $i")
+                .and(fr0"j == $j")
+                .and(fr0"k LIKE '%$k%'")
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) AND (j == ?) AND (k LIKE '%?%')"
+            }
+            "single OR condition" in {
+              update[ATable]
+                .set[ATable]
+                .where(fr0"i == $i")
+                .or(fr0"j == $j")
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) OR (j == ?)"
+            }
+            "multiple OR conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(fr0"i == $i")
+                .or(fr0"j == $j")
+                .or(fr0"k LIKE '%$k%'")
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) OR (j == ?) OR (k LIKE '%?%')"
+            }
+            "mixed AND with OR conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(fr0"i == $i")
+                .and(fr0"j == $j")
+                .or(fr0"k LIKE '%$k%'")
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) AND (j == ?) OR (k LIKE '%?%')"
+            }
           }
         }
       }
