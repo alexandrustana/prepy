@@ -288,7 +288,7 @@ class DoobieSyntaxSpec extends Specification {
         "with single condition" in {
           update[ATable]
             .set[ATable]
-            .where("i == 1")
+            .where(fr0"i == 1")
             .update()
             .sql
             .trim mustEqual
@@ -299,8 +299,8 @@ class DoobieSyntaxSpec extends Specification {
           "single AND condition" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
+              .where(fr0"i == 1")
+              .and(fr0"j == TRUE")
               .update()
               .sql
               .trim mustEqual
@@ -309,9 +309,9 @@ class DoobieSyntaxSpec extends Specification {
           "multiple AND conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where(fr0"i == 1")
+              .and(fr0"j == TRUE")
+              .and(fr0"k LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
@@ -320,8 +320,8 @@ class DoobieSyntaxSpec extends Specification {
           "single OR condition" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
+              .where(fr0"i == 1")
+              .or(fr0"j == TRUE")
               .update()
               .sql
               .trim mustEqual
@@ -330,9 +330,9 @@ class DoobieSyntaxSpec extends Specification {
           "multiple OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where(fr0"i == 1")
+              .or(fr0"j == TRUE")
+              .or(fr0"k LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
@@ -341,9 +341,9 @@ class DoobieSyntaxSpec extends Specification {
           "mixed AND with OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where(fr0"i == 1")
+              .and(fr0"j == TRUE")
+              .or(fr0"k LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
