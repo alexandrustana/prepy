@@ -3,9 +3,9 @@ package prepy.syntax.doobie.internal
 import doobie.implicits._
 import doobie.util.fragment.Fragment
 import doobie.util.fragments.parentheses
-import prepy.syntax.ast.internal.{Query, Select, Where}
+import prepy.syntax.ast.internal.{Query, Where => internal}
 
-private[internal] trait DoobieWhere extends Where {
+private[internal] trait Where extends internal {
   abstract private[internal] class logicalOpD[T <: Product](elem: Query, predicate: Fragment) extends logicalOp[T] {
     override def queryElement: Query  = elem
     override def condition:    String = predicate.toString
