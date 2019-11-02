@@ -197,9 +197,10 @@ class DoobieSyntaxSpec extends Specification {
         "without condition" in {
           delete[ATable].update().sql.trim mustEqual "DELETE FROM ATable"
         }
+
         "with single condition" in {
           delete[ATable]
-            .where("i == 1")
+            .where(fr0"i == 1")
             .update()
             .sql
             .trim mustEqual "DELETE FROM ATable WHERE (i == 1)"
@@ -208,17 +209,17 @@ class DoobieSyntaxSpec extends Specification {
         "with multiple conditions" in {
           "single AND condition" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
+              .where(fr0"i == 1")
+              .and(fr0"j == TRUE")
               .update()
               .sql
               .trim mustEqual "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE)"
           }
           "multiple AND conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where(fr0"i == 1")
+              .and(fr0"j == TRUE")
+              .and(fr0"k LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
@@ -226,17 +227,17 @@ class DoobieSyntaxSpec extends Specification {
           }
           "single OR condition" in {
             delete[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
+              .where(fr0"i == 1")
+              .or(fr0"j == TRUE")
               .update()
               .sql
               .trim mustEqual "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE)"
           }
           "multiple OR conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where(fr0"i == 1")
+              .or(fr0"j == TRUE")
+              .or(fr0"k LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
@@ -244,13 +245,75 @@ class DoobieSyntaxSpec extends Specification {
           }
           "mixed AND with OR conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where(fr0"i == 1")
+              .and(fr0"j == TRUE")
+              .or(fr0"k LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
               "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+          }
+        }
+
+        "with interpolated conditions" in {
+          val i = 1
+          val j = true
+          val k = "foo"
+          "with single condition" in {
+            delete[ATable]
+              .where(fr0"i == $i")
+              .update()
+              .sql
+              .trim mustEqual "DELETE FROM ATable WHERE (i == ?)"
+          }
+
+          "with multiple conditions" in {
+            "single AND condition" in {
+              delete[ATable]
+                .where(fr0"i == $i")
+                .and(fr0"j == $j")
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (i == ?) AND (j == ?)"
+            }
+            "multiple AND conditions" in {
+              delete[ATable]
+                .where(fr0"i == $i")
+                .and(fr0"j == $j")
+                .and(fr0"k LIKE '%$k%'")
+                .update()
+                .sql
+                .trim mustEqual
+                "DELETE FROM ATable WHERE (i == ?) AND (j == ?) AND (k LIKE '%?%')"
+            }
+            "single OR condition" in {
+              delete[ATable]
+                .where(fr0"i == $i")
+                .or(fr0"j == $j")
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (i == ?) OR (j == ?)"
+            }
+            "multiple OR conditions" in {
+              delete[ATable]
+                .where(fr0"i == $i")
+                .or(fr0"j == $j")
+                .or(fr0"k LIKE '%$k%'")
+                .update()
+                .sql
+                .trim mustEqual
+                "DELETE FROM ATable WHERE (i == ?) OR (j == ?) OR (k LIKE '%?%')"
+            }
+            "mixed AND with OR conditions" in {
+              delete[ATable]
+                .where(fr0"i == $i")
+                .and(fr0"j == $j")
+                .or(fr0"k LIKE '%$k%'")
+                .update()
+                .sql
+                .trim mustEqual
+                "DELETE FROM ATable WHERE (i == ?) AND (j == ?) OR (k LIKE '%?%')"
+            }
           }
         }
       }

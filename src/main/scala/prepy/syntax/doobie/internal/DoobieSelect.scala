@@ -13,7 +13,7 @@ private[doobie] trait DoobieSelect {
     def where(fr: Fragment): DoobieSelect.`whereD`[O] = DoobieSelect.`whereD`[O](elem, fr)
   }
 
-  implicit class `selectFilterD`[O <: Product](elem: DoobieSelect.logicalOp[_] { type Out = O })(
+  implicit class `selectFilterD`[O <: Product](elem: DoobieSelect.logicalOpD[_] { type Out = O })(
     implicit read:                                   Read[O]
   ) {
     def query(): Query0[O] = elem.compile().query[O]

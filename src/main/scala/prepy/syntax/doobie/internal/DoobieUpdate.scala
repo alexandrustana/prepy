@@ -7,14 +7,14 @@ import prepy.syntax.ast.internal.Update
 
 private[doobie] trait DoobieUpdate {
 
-  implicit class valuesUpdateSyntax[O <: Product](elem: Update.`setT`[_] { type Out = O })(implicit write: Write[O]) {
+  implicit class `setD`[O <: Product](elem: Update.`setT`[_] { type Out = O })(implicit write: Write[O]) {
     def update(): Update0 = Update0(elem.toString, None)
 
     def where(fr: Fragment): DoobieUpdate.`whereD`[O] = DoobieUpdate.`whereD`[O](elem, fr)
   }
 
-  implicit class `updateFilterD`[O <: Product](elem: DoobieUpdate.logicalOp[_] { type Out = O })(
-    implicit read:                                   Write[O]
+  implicit class `updateFilterD`[O <: Product](elem: DoobieUpdate.logicalOpD[_] { type Out = O })(
+    implicit write:                                  Write[O]
   ) {
     def update(): Update0 = elem.compile().update
   }
