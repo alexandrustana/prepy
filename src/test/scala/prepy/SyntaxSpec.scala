@@ -1,6 +1,5 @@
 package prepy
 
-import cats.Id
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
 import prepy.syntax._
