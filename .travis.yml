@@ -1,20 +1,44 @@
 language: scala
 
+sudo: required
+
 dist: trusty
 
-scala:
-  - 2.12.10
-  - 2.13.0
-  -
+group: edge
+
+git:
+  depth: 9999
+
 jdk:
   - oraclejdk8
 
+scala_version_212: &scala_version_212 2.12.10
+scala_version_213: &scala_version_213 2.13.0
+
 branches:
-  only:
-    - master
+    only:
+      - master
+
+before_install:
+  - export PATH=${PATH}:./vendor/bundle
+
+jobs:
+  include:
+    # it can speed up the overall build to have the longer-running jobs at the top of this list.
+    - env: TEST="coverage"
+      install: pip install --user codecov
+      script: sbt coverage root/test coverageReport && codecov
+
+    - &jvm_tests
+      env: TEST="JVM tests"
+      script: sbt ";project root; ++$TRAVIS_SCALA_VERSION test"
+      scala: *scala_version_212
+    - <<: *jvm_tests
+      scala: *scala_version_213
 
 cache:
   directories:
+    - $HOME/.m2
     - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot
+    - $HOME/.sbt
     - $HOME/.coursier
