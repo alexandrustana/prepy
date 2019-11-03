@@ -19,7 +19,6 @@ object Compiler {
       organization in ThisBuild := organizationName,
       homepage                  := Some(url(prepyHomepage)),
       scalaVersion              := mainScalaVersion,
-      crossScalaVersions        := List(scala2_12, scala2_13),
       addCompilerPlugin(kindProjector),
       addCompilerPlugin(betterMonadicFor),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {

@@ -20,6 +20,14 @@ addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8") //https://github.com/xer
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0") //https://github.com/sbt/sbt-pgp/releases
 
 /**
+ *
+ * Helps us integrate with travis-ci and automate the deployment process
+ *
+ * https://github.com/dwijnand/sbt-travisci
+*/
+addSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.2.0")
+
+/**
  * build configured in ``project/ReleaseProcess``
  *
  * https://github.com/sbt/sbt-release/releases
