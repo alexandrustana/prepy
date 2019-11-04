@@ -33,7 +33,7 @@ addSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.2.0")
  *
  * https://github.com/scoverage/sbt-scoverage
  */
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
 
 /**
  * build configured in ``project/ReleaseProcess``
