@@ -1,7 +1,6 @@
 package prepy.syntax.doobie.internal
 
 import doobie.util.Write
-import doobie.util.update.Update0
 import prepy.syntax.ast.internal.{Insert => internal}
 
 private[doobie] trait Insert {

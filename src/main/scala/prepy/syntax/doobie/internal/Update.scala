@@ -2,7 +2,6 @@ package prepy.syntax.doobie.internal
 
 import doobie.util.Write
 import doobie.util.fragment.Fragment
-import doobie.util.update.Update0
 import prepy.syntax.ast.internal.{Update => internal}
 
 private[doobie] trait Update {
