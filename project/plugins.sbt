@@ -28,6 +28,14 @@ addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.0") //https://github.com/sbt/sbt-
 addSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.2.0")
 
 /**
+ *
+ * Enables generating code coverage reports
+ *
+ * https://github.com/scoverage/sbt-scoverage
+ */
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+
+/**
  * build configured in ``project/ReleaseProcess``
  *
  * https://github.com/sbt/sbt-release/releases

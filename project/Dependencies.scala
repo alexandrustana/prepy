@@ -5,7 +5,7 @@ object Dependencies {
 
   object versions {
     val shapeless = "2.3.3"
-    val cats      = "2.0.0"
+    val cats      = "2.0.0-M4"
     val doobie    = "0.8.0-M1"
     val specs2    = "4.7.1"
   }

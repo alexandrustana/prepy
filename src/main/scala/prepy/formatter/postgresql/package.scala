@@ -1,5 +1,5 @@
 package prepy.formatter
 
-package object postgresql  {
+package object postgresql {
   implicit val format: Formatter = PostgresqlFormatter
 }

@@ -24,6 +24,10 @@ before_install:
 
 jobs:
   include:
+    - env: TEST="coverage"
+      install: pip install --user codecov
+      script: sbt coverage root/test coverageReport && codecov
+
     - &jvm_tests
       env: TEST="JVM tests"
       script: sbt ";project root; ++$TRAVIS_SCALA_VERSION test"
