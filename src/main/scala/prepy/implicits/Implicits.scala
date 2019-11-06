@@ -1,10 +1,13 @@
 package prepy.implicits
 
-private[prepy] trait Implicits extends Serialize {}
+import scala.annotation.implicitNotFound
+
+private[prepy] trait Implicits extends Serialize with Validate {}
 
 object Implicits {
 
-  trait Domain[T <: Product] {
+  @implicitNotFound("Cannot build serialize function from ${T}")
+  trait Serialize[T <: Product] {
     type Entity = T
 
     val fields: List[Symbol]
@@ -14,7 +17,14 @@ object Implicits {
          |""".stripMargin
   }
 
-  object Domain {
-    def apply[T <: Product](implicit inst: Domain[T]): Domain[T] = inst
+  object Serialize {
+    def apply[T <: Product](implicit inst: Serialize[T]): Serialize[T] = inst
+  }
+
+  @implicitNotFound("Cannot build transform function from ${From} to ${To}, possibly due to missing fields in ${To}")
+  trait Transform[From <: Product, To <: Product]{}
+
+  object Transform {
+    def apply[From <: Product, To <: Product](implicit  inst: Transform[From, To]): Transform[From, To] = inst
   }
 }

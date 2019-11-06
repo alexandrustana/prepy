@@ -1,33 +1,15 @@
 package prepy.implicits
 
+import prepy.implicits.internal.FlattenPoly
 import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
-private[implicits] trait Serialize {
-  type Domain[T <: Product] = Implicits.Domain[T]
+private[implicits] trait Serialize extends FlattenPoly {
+  type Domain[T <: Product] = Implicits.Serialize[T]
 
   private def pure[T <: Product](symbols: List[Symbol]): Domain[T] = new Domain[T] {
     override val fields: List[Symbol] = symbols
-  }
-
-  trait primitivePoly extends Poly1 {
-    implicit def primitive[K <: Symbol, V](
-      implicit
-      witness: Witness.Aux[K]
-    ): Case.Aux[FieldType[K, V], K :: HNil] = {
-      at[FieldType[K, V]](_ => witness.value :: HNil)
-    }
-  }
-
-  object complexPoly extends primitivePoly {
-    implicit def complex[K <: Symbol, V <: Product, GenV <: HList, FlatV <: HList](
-      implicit
-      gen:     LabelledGeneric.Aux[V, GenV],
-      flatten: FlatMapper.Aux[complexPoly.type, GenV, FlatV]
-    ): Case.Aux[FieldType[K, V], FlatV] = {
-      at[FieldType[K, V]](t => flatten(gen.to(t)))
-    }
   }
 
   object witnessPoly extends Poly0 {

@@ -2,7 +2,7 @@ package prepy.syntax.ast.internal
 
 import cats.data.Validated.Invalid
 import prepy.formatter.{Formatter, IdentityFormatter}
-import prepy.implicits.Implicits.Domain
+import prepy.implicits.Implicits.Serialize
 import shapeless.Typeable
 
 private[syntax] trait Update {
@@ -21,7 +21,7 @@ object Update extends Where {
     override def apply() =
       Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[K]`")
 
-    def set[K <: Product](implicit domain: Domain[K]): `setT`[K] = `setT`[K](this, domain.fields, formatter)
+    def set[K <: Product](implicit domain: Serialize[K]): `setT`[K] = `setT`[K](this, domain.fields, formatter)
 
     override def toString: String = s"UPDATE ${formatter(tableName)}"
   }

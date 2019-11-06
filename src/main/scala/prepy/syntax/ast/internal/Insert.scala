@@ -3,7 +3,7 @@ package prepy.syntax.ast.internal
 import cats.data.Validated.Invalid
 import prepy.formatter.{Formatter, IdentityFormatter}
 import shapeless.Typeable
-import prepy.implicits.Implicits.Domain
+import prepy.implicits.Implicits.Serialize
 
 private[prepy] trait Insert {
 
@@ -20,7 +20,7 @@ object Insert {
     override def apply() =
       Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`")
 
-    def values[K <: Product](implicit inst: Domain[K]): `valuesT`[K] = `valuesT`[K](this, inst.fields, formatter)
+    def values[K <: Product](implicit inst: Serialize[K]): `valuesT`[K] = `valuesT`[K](this, inst.fields, formatter)
 
     override def toString: String = s"INSERT INTO ${formatter(tableName)}"
   }
