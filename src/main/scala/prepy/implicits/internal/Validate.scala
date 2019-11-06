@@ -2,7 +2,8 @@ package prepy.implicits.internal
 
 import prepy.implicits.Implicits
 import shapeless.ops.hlist._
-import shapeless.{HList, HNil, LabelledGeneric}
+import shapeless.ops.record._
+import shapeless.{Generic, HList, HNil, LabelledGeneric}
 
 trait Validate extends FlattenPoly {
   type Transform[From <: Product, To <: Product] = Implicits.Transform[From, To]
