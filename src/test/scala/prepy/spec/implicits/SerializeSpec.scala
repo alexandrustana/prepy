@@ -9,7 +9,7 @@ import shapeless.test.illTyped
 class SerializeSpec extends Specification with TestDomain {
 
   "serialize" should {
-    "have produce the same fields" in {
+    "produce the same fields" in {
       "flat case class" in {
         implicitly[Serialize[ATable]].fields.map(_.name) === List(
           "iField",
@@ -44,6 +44,13 @@ class SerializeSpec extends Specification with TestDomain {
           "oField"
         )
       }
+    }
+
+    "fail when using a class" in {
+      class Simple(i: Int, j: String, k: Double)
+
+      illTyped("implicitly[Serialize[Simple]]")
+      success
     }
   }
 }
