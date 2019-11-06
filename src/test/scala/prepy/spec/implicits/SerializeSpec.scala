@@ -46,11 +46,20 @@ class SerializeSpec extends Specification with TestDomain {
       }
     }
 
-    "fail when using a class" in {
-      class Simple(i: Int, j: String, k: Double)
+    "fail" in {
+      "using a class" in {
+        class Foo(i: Int, j: String, k: Double)
 
-      illTyped("implicitly[Serialize[Simple]]")
-      success
+        illTyped("implicitly[Serialize[Foo]]")
+        success
+      }
+
+      "using a trait" in {
+        trait Foo
+
+        illTyped("implicitly[Serialize[Foo]]")
+        success
+      }
     }
   }
 }
