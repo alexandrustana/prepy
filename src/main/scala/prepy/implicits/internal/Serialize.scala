@@ -5,9 +5,9 @@ import shapeless._
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
 private[implicits] trait Serialize extends FlattenPoly {
-  type Domain[Entity <: Product]                 = Implicits.Serialize[Entity]
+  type Serialize[Entity <: Product]                 = Implicits.Serialize[Entity]
 
-  private def pure[T <: Product](symbols: List[Symbol]): Domain[T] = new Domain[T] {
+  private def pure[T <: Product](symbols: List[Symbol]): Serialize[T] = new Serialize[T] {
     override val fields: List[Symbol] = symbols
   }
 
@@ -27,7 +27,7 @@ private[implicits] trait Serialize extends FlattenPoly {
     flatMap:          FlatMapper.Aux[complexPoly.type, EntityRepr, FlatEntityRepr],
     toList:           ToList[FlatEntityRepr, Symbol],
     fill:             FillWith[witnessPoly.type, FlatEntityRepr]
-  ): Domain[Entity] = {
+  ): Serialize[Entity] = {
     pure(toList(fill()))
   }
 }

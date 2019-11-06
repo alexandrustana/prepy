@@ -3,10 +3,10 @@ package prepy.spec.syntax
 import doobie.implicits._
 import doobie.util.Meta
 import org.specs2.mutable._
-import prepy.PrepyDomain
+import prepy.TestDomain
 import prepy.syntax.doobie._
 
-class DoobieSyntaxSpec extends Specification with PrepyDomain {
+class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits {
 
   implicit val intListMeta: Meta[List[Int]] =
     Meta[String].timap(arr => arr.split(",").map(_.toInt).toList)(_.mkString(","))

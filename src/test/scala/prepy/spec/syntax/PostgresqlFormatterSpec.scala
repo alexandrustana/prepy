@@ -2,12 +2,12 @@ package prepy.spec.syntax
 
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
-import prepy.PrepyDomain
+import prepy.TestDomain
 import prepy.formatter.postgresql._
 import prepy.syntax._
 import shapeless.cachedImplicit
 
-class PostgresqlFormatterSpec extends Specification with PrepyDomain {
+class PostgresqlFormatterSpec extends Specification with TestDomain with TestImplicits {
 
   "select" should {
 

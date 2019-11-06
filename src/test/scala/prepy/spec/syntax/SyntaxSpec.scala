@@ -2,24 +2,28 @@ package prepy.spec.syntax
 
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
-import prepy.PrepyDomain
+import prepy.TestDomain
 import prepy.syntax._
 
-class SyntaxSpec extends Specification with PrepyDomain {
+class SyntaxSpec extends Specification with TestDomain with TestImplicits {
 
   "select" should {
 
     "be equal" in {
       "select query" in {
         "without condition" in {
-          select[ATable].from[ATable].apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable")
+          select[ATable].from[ATable].apply() mustEqual Valid(
+            "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable"
+          )
         }
 
         "with single condition" in {
           select[ATable]
             .from[ATable]
             .where("iField == 1")
-            .apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1)")
+            .apply() mustEqual Valid(
+            "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1)"
+          )
         }
 
         "with multiple conditions" in {
@@ -28,7 +32,9 @@ class SyntaxSpec extends Specification with PrepyDomain {
               .from[ATable]
               .where("iField == 1")
               .and("jField == TRUE")
-              .apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE)")
+              .apply() mustEqual Valid(
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE)"
+            )
           }
           "multiple AND conditions" in {
             select[ATable]
@@ -45,7 +51,9 @@ class SyntaxSpec extends Specification with PrepyDomain {
               .from[ATable]
               .where("iField == 1")
               .or("jField == TRUE")
-              .apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE)")
+              .apply() mustEqual Valid(
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE)"
+            )
           }
           "multiple OR conditions" in {
             select[ATable]
@@ -81,10 +89,14 @@ class SyntaxSpec extends Specification with PrepyDomain {
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].apply() mustEqual Valid("SELECT lField, iField, jField, kField, mField FROM ATable")
+          select[DTable].from[ATable].apply() mustEqual Valid(
+            "SELECT lField, iField, jField, kField, mField FROM ATable"
+          )
         }
         "two level nesting" in {
-          select[ETable].from[ATable].apply() mustEqual Valid("SELECT nField, lField, iField, jField, kField, mField, oField FROM ATable")
+          select[ETable].from[ATable].apply() mustEqual Valid(
+            "SELECT nField, lField, iField, jField, kField, mField, oField FROM ATable"
+          )
         }
       }
 
@@ -252,13 +264,17 @@ class SyntaxSpec extends Specification with PrepyDomain {
           update[ATable].set[BTable].apply() mustEqual Valid("UPDATE ATable SET iField = ?, jField = ?, kField = ?")
         }
         "random fields" in {
-          update[ATable].set[CTable].apply() mustEqual Valid("UPDATE ATable SET iField = ?, lField = ?, oField = ?, pField = ?")
+          update[ATable].set[CTable].apply() mustEqual Valid(
+            "UPDATE ATable SET iField = ?, lField = ?, oField = ?, pField = ?"
+          )
         }
       }
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET lField = ?, iField = ?, jField = ?, kField = ?, mField = ?")
+          update[ATable].set[DTable].apply() mustEqual Valid(
+            "UPDATE ATable SET lField = ?, iField = ?, jField = ?, kField = ?, mField = ?"
+          )
         }
         "two level nesting" in {
           update[ATable].set[ETable].apply() mustEqual Valid(
