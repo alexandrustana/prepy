@@ -1,28 +1,12 @@
-package prepy
+package prepy.spec.syntax
 
-import doobie.util.Meta
 import doobie.implicits._
+import doobie.util.Meta
 import org.specs2.mutable._
+import prepy.PrepyDomain
 import prepy.syntax.doobie._
-import shapeless.cachedImplicit
 
-class DoobieSyntaxSpec extends Specification {
-
-  case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
-
-  case class BTable(i: Int, j: Boolean, k: String)
-
-  case class CTable(i: Int, l: Char, o: List[Int], p: Option[Float])
-
-  case class DTable(a: Int, b: BTable, c: String)
-
-  case class ETable(d: Int, e: DTable, f: String)
-
-  implicit val aDomain = cachedImplicit[Domain[ATable]]
-  implicit val bDomain = cachedImplicit[Domain[BTable]]
-  implicit val cDomain = cachedImplicit[Domain[CTable]]
-  implicit val dDomain = cachedImplicit[Domain[DTable]]
-  implicit val EDomain = cachedImplicit[Domain[ETable]]
+class DoobieSyntaxSpec extends Specification with PrepyDomain {
 
   implicit val intListMeta: Meta[List[Int]] =
     Meta[String].timap(arr => arr.split(",").map(_.toInt).toList)(_.mkString(","))
@@ -181,10 +165,10 @@ class DoobieSyntaxSpec extends Specification {
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].query().sql.trim mustEqual "SELECT a, i, j, k, c FROM ATable"
+          select[DTable].from[ATable].query().sql.trim mustEqual "SELECT l, i, j, k, m FROM ATable"
         }
         "two level nesting" in {
-          select[ETable].from[ATable].query().sql.trim mustEqual "SELECT d, a, i, j, k, c, f FROM ATable"
+          select[ETable].from[ATable].query().sql.trim mustEqual "SELECT n, l, i, j, k, m, o FROM ATable"
         }
       }
 
@@ -329,11 +313,11 @@ class DoobieSyntaxSpec extends Specification {
       "insert all fields from nested product" in {
         "one level nesting" in {
           insert[DTable].values[DTable].update().sql.trim mustEqual
-            "INSERT INTO DTable (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO DTable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
         }
         "two level nesting" in {
           insert[ETable].values[ETable].update().sql.trim mustEqual
-            "INSERT INTO ETable (d, a, i, j, k, c, f) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO ETable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
         }
       }
     }
@@ -497,11 +481,11 @@ class DoobieSyntaxSpec extends Specification {
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].update().sql.trim mustEqual "UPDATE ATable SET a = ?, i = ?, j = ?, k = ?, c = ?"
+          update[ATable].set[DTable].update().sql.trim mustEqual "UPDATE ATable SET l = ?, i = ?, j = ?, k = ?, m = ?"
         }
         "two level nesting" in {
           update[ATable].set[ETable].update().sql.trim mustEqual
-            "UPDATE ATable SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?"
+            "UPDATE ATable SET n = ?, l = ?, i = ?, j = ?, k = ?, m = ?, o = ?"
         }
       }
 

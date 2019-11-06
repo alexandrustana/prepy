@@ -2,7 +2,7 @@ package prepy.syntax.ast.internal
 
 import cats.data.Validated.Invalid
 import prepy.formatter.{Formatter, IdentityFormatter}
-import prepy.implicits.Implicits.{Serialize, Transform}
+import prepy.implicits.Implicits._
 import shapeless.Typeable
 
 private[syntax] trait Select {
@@ -17,7 +17,7 @@ object Select extends Where {
     override def apply() =
       Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[K]`")
 
-    def from[K <: Product](implicit typeable: Typeable[K], validate: Transform[K, T]): Select.`fromT`[T] =
+    def from[K <: Product](implicit typeable: Typeable[K], transform: Transform[K, T]): Select.`fromT`[T] =
       `fromT`[T](this, typeable.describe, formatter)
 
     override def toString: String = s"SELECT ${fields.map(_.name).map(formatter.apply).mkString(", ")}"

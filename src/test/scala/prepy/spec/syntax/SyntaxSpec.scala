@@ -1,23 +1,11 @@
-package prepy
+package prepy.spec.syntax
 
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
+import prepy.PrepyDomain
 import prepy.syntax._
-import shapeless.cachedImplicit
 
-class SyntaxSpec extends Specification {
-
-  case class ATable(i: Int, j: Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
-  case class BTable(i: Int, j: Boolean, k: String)
-  case class CTable(i: Int, l: Char, o:    List[Int], p: Option[Float])
-  case class DTable(a: Int, b: BTable, c:  String)
-  case class ETable(d: Int, e: DTable, f:  String)
-
-  implicit val aDomain = cachedImplicit[Domain[ATable]]
-  implicit val bDomain = cachedImplicit[Domain[BTable]]
-  implicit val cDomain = cachedImplicit[Domain[CTable]]
-  implicit val dDomain = cachedImplicit[Domain[DTable]]
-  implicit val EDomain = cachedImplicit[Domain[ETable]]
+class SyntaxSpec extends Specification with PrepyDomain {
 
   "select" should {
 
@@ -93,10 +81,10 @@ class SyntaxSpec extends Specification {
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].apply() mustEqual Valid("SELECT a, i, j, k, c FROM ATable")
+          select[DTable].from[ATable].apply() mustEqual Valid("SELECT l, i, j, k, m FROM ATable")
         }
         "two level nesting" in {
-          select[ETable].from[ATable].apply() mustEqual Valid("SELECT d, a, i, j, k, c, f FROM ATable")
+          select[ETable].from[ATable].apply() mustEqual Valid("SELECT n, l, i, j, k, m, o FROM ATable")
         }
       }
 
@@ -173,12 +161,12 @@ class SyntaxSpec extends Specification {
       "insert all fields from nested product" in {
         "one level nesting" in {
           insert[DTable].values[DTable].apply() mustEqual Valid(
-            "INSERT INTO DTable (a, i, j, k, c) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO DTable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
           )
         }
         "two level nesting" in {
           insert[ETable].values[ETable].apply() mustEqual Valid(
-            "INSERT INTO ETable (d, a, i, j, k, c, f) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO ETable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
       }
@@ -270,11 +258,11 @@ class SyntaxSpec extends Specification {
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET a = ?, i = ?, j = ?, k = ?, c = ?")
+          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET l = ?, i = ?, j = ?, k = ?, m = ?")
         }
         "two level nesting" in {
           update[ATable].set[ETable].apply() mustEqual Valid(
-            "UPDATE ATable SET d = ?, a = ?, i = ?, j = ?, k = ?, c = ?, f = ?"
+            "UPDATE ATable SET n = ?, l = ?, i = ?, j = ?, k = ?, m = ?, o = ?"
           )
         }
       }

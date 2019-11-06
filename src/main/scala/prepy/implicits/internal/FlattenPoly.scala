@@ -4,7 +4,7 @@ import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.FlatMapper
 
-private[implicits] trait FlattenPoly {
+ trait FlattenPoly {
 
   trait primitivePoly extends Poly1 {
     implicit def primitive[K <: Symbol, V](

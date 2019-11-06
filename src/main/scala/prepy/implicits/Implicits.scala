@@ -1,5 +1,7 @@
 package prepy.implicits
 
+import prepy.implicits.internal.{Serialize, Validate}
+
 import scala.annotation.implicitNotFound
 
 private[prepy] trait Implicits extends Serialize with Validate {}
@@ -22,9 +24,9 @@ object Implicits {
   }
 
   @implicitNotFound("Cannot build transform function from ${From} to ${To}, possibly due to missing fields in ${To}")
-  trait Transform[From <: Product, To <: Product]{}
+  trait Transform[From <: Product, To <: Product] {}
 
   object Transform {
-    def apply[From <: Product, To <: Product](implicit  inst: Transform[From, To]): Transform[From, To] = inst
+    def apply[From <: Product, To <: Product](implicit inst: Transform[From, To]): Transform[From, To] = inst
   }
 }

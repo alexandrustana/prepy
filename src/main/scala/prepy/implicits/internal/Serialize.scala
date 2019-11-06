@@ -1,12 +1,11 @@
-package prepy.implicits
+package prepy.implicits.internal
 
-import prepy.implicits.internal.FlattenPoly
+import prepy.implicits.Implicits
 import shapeless._
-import shapeless.labelled.FieldType
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
 private[implicits] trait Serialize extends FlattenPoly {
-  type Domain[T <: Product] = Implicits.Serialize[T]
+  type Domain[Entity <: Product]                 = Implicits.Serialize[Entity]
 
   private def pure[T <: Product](symbols: List[Symbol]): Domain[T] = new Domain[T] {
     override val fields: List[Symbol] = symbols
