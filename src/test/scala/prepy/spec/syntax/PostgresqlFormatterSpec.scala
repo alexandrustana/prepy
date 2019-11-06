@@ -2,32 +2,12 @@ package prepy.spec.syntax
 
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
+import prepy.PrepyDomain
 import prepy.formatter.postgresql._
 import prepy.syntax._
 import shapeless.cachedImplicit
 
-class PostgresqlFormatterSpec extends Specification {
-
-  case class ATable(
-    iField: Int,
-    jField: Boolean,
-    kField: String,
-    lField: Char,
-    mField: Double,
-    nField: Double,
-    oField: List[Int],
-    pField: Option[Float]
-  )
-  case class BTable(iField: Int, jField:    Boolean, kField: String)
-  case class CTable(iField: Int, lField:    Char, oField:    List[Int], pField: Option[Float])
-  case class DTable(lField: Char, bField:   BTable, mField:  Double)
-  case class ETable(nField: Double, eField: DTable, oField:  List[Int])
-
-  implicit val aDomain = cachedImplicit[Domain[ATable]]
-  implicit val bDomain = cachedImplicit[Domain[BTable]]
-  implicit val cDomain = cachedImplicit[Domain[CTable]]
-  implicit val dDomain = cachedImplicit[Domain[DTable]]
-  implicit val EDomain = cachedImplicit[Domain[ETable]]
+class PostgresqlFormatterSpec extends Specification with PrepyDomain {
 
   "select" should {
 

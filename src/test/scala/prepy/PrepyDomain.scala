@@ -4,11 +4,20 @@ import prepy.syntax._
 import shapeless.cachedImplicit
 
 trait PrepyDomain {
-  case class ATable(i: Int, j:    Boolean, k: String, l: Char, m: Double, n: Double, o: List[Int], p: Option[Float])
-  case class BTable(i: Int, j:    Boolean, k: String)
-  case class CTable(i: Int, l:    Char, o:    List[Int], p: Option[Float])
-  case class DTable(l: Char, b:   BTable, m:  Double)
-  case class ETable(n: Double, e: DTable, o:  List[Int])
+  case class ATable(
+    iField: Int,
+    jField: Boolean,
+    kField: String,
+    lField: Char,
+    mField: Double,
+    nField: Double,
+    oField: List[Int],
+    pField: Option[Float]
+  )
+  case class BTable(iField: Int, jField:    Boolean, kField: String)
+  case class CTable(iField: Int, lField:    Char, oField:    List[Int], pField: Option[Float])
+  case class DTable(lField: Char, bField:   BTable, mField:  Double)
+  case class ETable(nField: Double, eField: DTable, oField:  List[Int])
 
   implicit val aDomain: Domain[ATable] = cachedImplicit[Domain[ATable]]
   implicit val bDomain: Domain[BTable] = cachedImplicit[Domain[BTable]]

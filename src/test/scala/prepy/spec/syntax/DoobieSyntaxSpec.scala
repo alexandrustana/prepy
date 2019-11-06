@@ -17,138 +17,138 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
     "be equal" in {
       "select query" in {
         "without condition" in {
-          select[ATable].from[ATable].query().sql.trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable"
+          select[ATable].from[ATable].query().sql.trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable"
         }
 
         "with single condition" in {
           select[ATable]
             .from[ATable]
-            .where(fr0"i == 1")
+            .where(fr0"iField == 1")
             .query()
             .sql
             .trim
-            .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1)"
+            .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1)"
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             select[ATable]
               .from[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
               .query()
               .sql
-              .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE)"
+              .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE)"
           }
           "multiple AND conditions" in {
             select[ATable]
               .from[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
-              .and(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
+              .and(fr0"kField LIKE '%foo%'")
               .query()
               .sql
               .trim mustEqual
-              "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
           }
           "single OR condition" in {
             select[ATable]
               .from[ATable]
-              .where(fr0"i == 1")
-              .or(fr0"j == TRUE")
+              .where(fr0"iField == 1")
+              .or(fr0"jField == TRUE")
               .query()
               .sql
-              .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) OR (j == TRUE)"
+              .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE)"
           }
           "multiple OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where(fr0"i == 1")
-              .or(fr0"j == TRUE")
-              .or(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .or(fr0"jField == TRUE")
+              .or(fr0"kField LIKE '%foo%'")
               .query()
               .sql
               .trim mustEqual
-              "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
           }
           "mixed AND with OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
-              .or(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
+              .or(fr0"kField LIKE '%foo%'")
               .query()
               .sql
               .trim mustEqual
-              "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
           }
         }
 
         "with interpolated conditions" in {
-          val i = 1
-          val j = true
-          val k = "foo"
+          val iField = 1
+          val jField = true
+          val kField = "foo"
           "single condition" in {
             select[ATable]
               .from[ATable]
-              .where(fr0"i == $i")
+              .where(fr0"iField == $iField")
               .query()
               .sql
               .trim
-              .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?)"
+              .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?)"
           }
 
           "multiple conditions" in {
             "single AND condition" in {
               select[ATable]
                 .from[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
                 .query()
                 .sql
-                .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?) AND (j == ?)"
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?) AND (jField == ?)"
             }
             "multiple AND conditions" in {
               select[ATable]
                 .from[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
-                .and(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
+                .and(fr0"kField LIKE '%$kField%'")
                 .query()
                 .sql
                 .trim mustEqual
-                "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?) AND (j == ?) AND (k LIKE '%?%')"
+                "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?) AND (jField == ?) AND (kField LIKE '%?%')"
             }
             "single OR condition" in {
               select[ATable]
                 .from[ATable]
-                .where(fr0"i == $i")
-                .or(fr0"j == $j")
+                .where(fr0"iField == $iField")
+                .or(fr0"jField == $jField")
                 .query()
                 .sql
-                .trim mustEqual "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?) OR (j == ?)"
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?) OR (jField == ?)"
             }
             "multiple OR conditions" in {
               select[ATable]
                 .from[ATable]
-                .where(fr0"i == $i")
-                .or(fr0"j == $j")
-                .or(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .or(fr0"jField == $jField")
+                .or(fr0"kField LIKE '%$kField%'")
                 .query()
                 .sql
                 .trim mustEqual
-                "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?) OR (j == ?) OR (k LIKE '%?%')"
+                "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?) OR (jField == ?) OR (kField LIKE '%?%')"
             }
             "mixed AND with OR conditions" in {
               select[ATable]
                 .from[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
-                .or(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
+                .or(fr0"kField LIKE '%$kField%'")
                 .query()
                 .sql
                 .trim mustEqual
-                "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == ?) AND (j == ?) OR (k LIKE '%?%')"
+                "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?) AND (jField == ?) OR (kField LIKE '%?%')"
             }
           }
         }
@@ -156,19 +156,19 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
 
       "select subset query" in {
         "first three fields" in {
-          select[BTable].from[ATable].query().sql.trim mustEqual "SELECT i, j, k FROM ATable"
+          select[BTable].from[ATable].query().sql.trim mustEqual "SELECT iField, jField, kField FROM ATable"
         }
         "random fields" in {
-          select[CTable].from[ATable].query().sql.trim mustEqual "SELECT i, l, o, p FROM ATable"
+          select[CTable].from[ATable].query().sql.trim mustEqual "SELECT iField, lField, oField, pField FROM ATable"
         }
       }
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].query().sql.trim mustEqual "SELECT l, i, j, k, m FROM ATable"
+          select[DTable].from[ATable].query().sql.trim mustEqual "SELECT lField, iField, jField, kField, mField FROM ATable"
         }
         "two level nesting" in {
-          select[ETable].from[ATable].query().sql.trim mustEqual "SELECT n, l, i, j, k, m, o FROM ATable"
+          select[ETable].from[ATable].query().sql.trim mustEqual "SELECT nField, lField, iField, jField, kField, mField, oField FROM ATable"
         }
       }
 
@@ -184,119 +184,119 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
 
         "with single condition" in {
           delete[ATable]
-            .where(fr0"i == 1")
+            .where(fr0"iField == 1")
             .update()
             .sql
-            .trim mustEqual "DELETE FROM ATable WHERE (i == 1)"
+            .trim mustEqual "DELETE FROM ATable WHERE (iField == 1)"
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             delete[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
               .update()
               .sql
-              .trim mustEqual "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE)"
+              .trim mustEqual "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE)"
           }
           "multiple AND conditions" in {
             delete[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
-              .and(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
+              .and(fr0"kField LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
-              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
           }
           "single OR condition" in {
             delete[ATable]
-              .where(fr0"i == 1")
-              .or(fr0"j == TRUE")
+              .where(fr0"iField == 1")
+              .or(fr0"jField == TRUE")
               .update()
               .sql
-              .trim mustEqual "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE)"
+              .trim mustEqual "DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE)"
           }
           "multiple OR conditions" in {
             delete[ATable]
-              .where(fr0"i == 1")
-              .or(fr0"j == TRUE")
-              .or(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .or(fr0"jField == TRUE")
+              .or(fr0"kField LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
-              "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
           }
           "mixed AND with OR conditions" in {
             delete[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
-              .or(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
+              .or(fr0"kField LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
-              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
           }
         }
 
         "with interpolated conditions" in {
-          val i = 1
-          val j = true
-          val k = "foo"
+          val iField = 1
+          val jField = true
+          val kField = "foo"
           "with single condition" in {
             delete[ATable]
-              .where(fr0"i == $i")
+              .where(fr0"iField == $iField")
               .update()
               .sql
-              .trim mustEqual "DELETE FROM ATable WHERE (i == ?)"
+              .trim mustEqual "DELETE FROM ATable WHERE (iField == ?)"
           }
 
           "with multiple conditions" in {
             "single AND condition" in {
               delete[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
                 .update()
                 .sql
-                .trim mustEqual "DELETE FROM ATable WHERE (i == ?) AND (j == ?)"
+                .trim mustEqual "DELETE FROM ATable WHERE (iField == ?) AND (jField == ?)"
             }
             "multiple AND conditions" in {
               delete[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
-                .and(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
+                .and(fr0"kField LIKE '%$kField%'")
                 .update()
                 .sql
                 .trim mustEqual
-                "DELETE FROM ATable WHERE (i == ?) AND (j == ?) AND (k LIKE '%?%')"
+                "DELETE FROM ATable WHERE (iField == ?) AND (jField == ?) AND (kField LIKE '%?%')"
             }
             "single OR condition" in {
               delete[ATable]
-                .where(fr0"i == $i")
-                .or(fr0"j == $j")
+                .where(fr0"iField == $iField")
+                .or(fr0"jField == $jField")
                 .update()
                 .sql
-                .trim mustEqual "DELETE FROM ATable WHERE (i == ?) OR (j == ?)"
+                .trim mustEqual "DELETE FROM ATable WHERE (iField == ?) OR (jField == ?)"
             }
             "multiple OR conditions" in {
               delete[ATable]
-                .where(fr0"i == $i")
-                .or(fr0"j == $j")
-                .or(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .or(fr0"jField == $jField")
+                .or(fr0"kField LIKE '%$kField%'")
                 .update()
                 .sql
                 .trim mustEqual
-                "DELETE FROM ATable WHERE (i == ?) OR (j == ?) OR (k LIKE '%?%')"
+                "DELETE FROM ATable WHERE (iField == ?) OR (jField == ?) OR (kField LIKE '%?%')"
             }
             "mixed AND with OR conditions" in {
               delete[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
-                .or(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
+                .or(fr0"kField LIKE '%$kField%'")
                 .update()
                 .sql
                 .trim mustEqual
-                "DELETE FROM ATable WHERE (i == ?) AND (j == ?) OR (k LIKE '%?%')"
+                "DELETE FROM ATable WHERE (iField == ?) AND (jField == ?) OR (kField LIKE '%?%')"
             }
           }
         }
@@ -308,16 +308,16 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
     "be equal" in {
       "insert all fields" in {
         insert[ATable].values[ATable].update().sql.trim mustEqual
-          "INSERT INTO ATable (i, j, k, l, m, n, o, p) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO ATable (iField, jField, kField, lField, mField, nField, oField, pField) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
           insert[ATable].values[DTable].update().sql.trim mustEqual
-            "INSERT INTO ATable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO ATable (lField, iField, jField, kField, mField) VALUES (?, ?, ?, ?, ?)"
         }
         "two level nesting" in {
           insert[ATable].values[ETable].update().sql.trim mustEqual
-            "INSERT INTO ATable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO ATable (nField, lField, iField, jField, kField, mField, oField) VALUES (?, ?, ?, ?, ?, ?, ?)"
         }
       }
     }
@@ -329,142 +329,142 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
       "update all query" in {
         "without condition" in {
           update[ATable].set[ATable].update().sql.trim mustEqual
-            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?"
+            "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ?"
         }
 
         "with single condition" in {
           update[ATable]
             .set[ATable]
-            .where(fr0"i == 1")
+            .where(fr0"iField == 1")
             .update()
             .sql
             .trim mustEqual
-            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)"
+            "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1)"
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             update[ATable]
               .set[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
               .update()
               .sql
               .trim mustEqual
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE)"
           }
           "multiple AND conditions" in {
             update[ATable]
               .set[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
-              .and(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
+              .and(fr0"kField LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
           }
           "single OR condition" in {
             update[ATable]
               .set[ATable]
-              .where(fr0"i == 1")
-              .or(fr0"j == TRUE")
+              .where(fr0"iField == 1")
+              .or(fr0"jField == TRUE")
               .update()
               .sql
               .trim mustEqual
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) OR (jField == TRUE)"
           }
           "multiple OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where(fr0"i == 1")
-              .or(fr0"j == TRUE")
-              .or(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .or(fr0"jField == TRUE")
+              .or(fr0"kField LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
           }
           "mixed AND with OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where(fr0"i == 1")
-              .and(fr0"j == TRUE")
-              .or(fr0"k LIKE '%foo%'")
+              .where(fr0"iField == 1")
+              .and(fr0"jField == TRUE")
+              .or(fr0"kField LIKE '%foo%'")
               .update()
               .sql
               .trim mustEqual
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
           }
         }
 
         "with interpolated conditions" in {
-          val i = 1
-          val j = true
-          val k = "foo"
+          val iField = 1
+          val jField = true
+          val kField = "foo"
           "single condition" in {
             update[ATable]
               .set[ATable]
-              .where(fr0"i == $i")
+              .where(fr0"iField == $iField")
               .update()
               .sql
               .trim mustEqual
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?)"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?)"
           }
 
           "multiple conditions" in {
             "single AND condition" in {
               update[ATable]
                 .set[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
                 .update()
                 .sql
                 .trim mustEqual
-                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) AND (j == ?)"
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?) AND (jField == ?)"
             }
             "multiple AND conditions" in {
               update[ATable]
                 .set[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
-                .and(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
+                .and(fr0"kField LIKE '%$kField%'")
                 .update()
                 .sql
                 .trim mustEqual
-                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) AND (j == ?) AND (k LIKE '%?%')"
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?) AND (jField == ?) AND (kField LIKE '%?%')"
             }
             "single OR condition" in {
               update[ATable]
                 .set[ATable]
-                .where(fr0"i == $i")
-                .or(fr0"j == $j")
+                .where(fr0"iField == $iField")
+                .or(fr0"jField == $jField")
                 .update()
                 .sql
                 .trim mustEqual
-                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) OR (j == ?)"
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?) OR (jField == ?)"
             }
             "multiple OR conditions" in {
               update[ATable]
                 .set[ATable]
-                .where(fr0"i == $i")
-                .or(fr0"j == $j")
-                .or(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .or(fr0"jField == $jField")
+                .or(fr0"kField LIKE '%$kField%'")
                 .update()
                 .sql
                 .trim mustEqual
-                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) OR (j == ?) OR (k LIKE '%?%')"
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?) OR (jField == ?) OR (kField LIKE '%?%')"
             }
             "mixed AND with OR conditions" in {
               update[ATable]
                 .set[ATable]
-                .where(fr0"i == $i")
-                .and(fr0"j == $j")
-                .or(fr0"k LIKE '%$k%'")
+                .where(fr0"iField == $iField")
+                .and(fr0"jField == $jField")
+                .or(fr0"kField LIKE '%$kField%'")
                 .update()
                 .sql
                 .trim mustEqual
-                "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == ?) AND (j == ?) OR (k LIKE '%?%')"
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?) AND (jField == ?) OR (kField LIKE '%?%')"
             }
           }
         }
@@ -472,20 +472,20 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
 
       "update subset query" in {
         "first three fields" in {
-          update[ATable].set[BTable].update().sql.trim mustEqual "UPDATE ATable SET i = ?, j = ?, k = ?"
+          update[ATable].set[BTable].update().sql.trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?"
         }
         "random fields" in {
-          update[ATable].set[CTable].update().sql.trim mustEqual "UPDATE ATable SET i = ?, l = ?, o = ?, p = ?"
+          update[ATable].set[CTable].update().sql.trim mustEqual "UPDATE ATable SET iField = ?, lField = ?, oField = ?, pField = ?"
         }
       }
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].update().sql.trim mustEqual "UPDATE ATable SET l = ?, i = ?, j = ?, k = ?, m = ?"
+          update[ATable].set[DTable].update().sql.trim mustEqual "UPDATE ATable SET lField = ?, iField = ?, jField = ?, kField = ?, mField = ?"
         }
         "two level nesting" in {
           update[ATable].set[ETable].update().sql.trim mustEqual
-            "UPDATE ATable SET n = ?, l = ?, i = ?, j = ?, k = ?, m = ?, o = ?"
+            "UPDATE ATable SET nField = ?, lField = ?, iField = ?, jField = ?, kField = ?, mField = ?, oField = ?"
         }
       }
 

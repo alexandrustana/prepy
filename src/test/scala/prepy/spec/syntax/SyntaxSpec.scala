@@ -12,59 +12,59 @@ class SyntaxSpec extends Specification with PrepyDomain {
     "be equal" in {
       "select query" in {
         "without condition" in {
-          select[ATable].from[ATable].apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM ATable")
+          select[ATable].from[ATable].apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable")
         }
 
         "with single condition" in {
           select[ATable]
             .from[ATable]
-            .where("i == 1")
-            .apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1)")
+            .where("iField == 1")
+            .apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1)")
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE)")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE)")
           }
           "multiple AND conditions" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .and("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .apply() mustEqual Valid("SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) OR (j == TRUE)")
+              .where("iField == 1")
+              .or("jField == TRUE")
+              .apply() mustEqual Valid("SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE)")
           }
           "multiple OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("iField == 1")
+              .or("jField == TRUE")
+              .or("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .or("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "SELECT i, j, k, l, m, n, o, p FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
         }
@@ -72,19 +72,19 @@ class SyntaxSpec extends Specification with PrepyDomain {
 
       "select subset query" in {
         "first three fields" in {
-          select[BTable].from[ATable].apply() mustEqual Valid("SELECT i, j, k FROM ATable")
+          select[BTable].from[ATable].apply() mustEqual Valid("SELECT iField, jField, kField FROM ATable")
         }
         "random fields" in {
-          select[CTable].from[ATable].apply() mustEqual Valid("SELECT i, l, o, p FROM ATable")
+          select[CTable].from[ATable].apply() mustEqual Valid("SELECT iField, lField, oField, pField FROM ATable")
         }
       }
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].apply() mustEqual Valid("SELECT l, i, j, k, m FROM ATable")
+          select[DTable].from[ATable].apply() mustEqual Valid("SELECT lField, iField, jField, kField, mField FROM ATable")
         }
         "two level nesting" in {
-          select[ETable].from[ATable].apply() mustEqual Valid("SELECT n, l, i, j, k, m, o FROM ATable")
+          select[ETable].from[ATable].apply() mustEqual Valid("SELECT nField, lField, iField, jField, kField, mField, oField FROM ATable")
         }
       }
 
@@ -102,48 +102,48 @@ class SyntaxSpec extends Specification with PrepyDomain {
         }
         "with single condition" in {
           delete[ATable]
-            .where("i == 1")
-            .apply() mustEqual Valid("DELETE FROM ATable WHERE (i == 1)")
+            .where("iField == 1")
+            .apply() mustEqual Valid("DELETE FROM ATable WHERE (iField == 1)")
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .apply() mustEqual Valid("DELETE FROM ATable WHERE (i == 1) AND (j == TRUE)")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .apply() mustEqual Valid("DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE)")
           }
           "multiple AND conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .and("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             delete[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .apply() mustEqual Valid("DELETE FROM ATable WHERE (i == 1) OR (j == TRUE)")
+              .where("iField == 1")
+              .or("jField == TRUE")
+              .apply() mustEqual Valid("DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE)")
           }
           "multiple OR conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("iField == 1")
+              .or("jField == TRUE")
+              .or("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "DELETE FROM ATable WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             delete[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .or("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "DELETE FROM ATable WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
         }
@@ -155,18 +155,18 @@ class SyntaxSpec extends Specification with PrepyDomain {
     "be equal" in {
       "insert all fields" in {
         insert[ATable].values[ATable].apply() mustEqual Valid(
-          "INSERT INTO ATable (i, j, k, l, m, n, o, p) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+          "INSERT INTO ATable (iField, jField, kField, lField, mField, nField, oField, pField) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         )
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
           insert[ATable].values[DTable].apply() mustEqual Valid(
-            "INSERT INTO ATable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
+            "INSERT INTO ATable (lField, iField, jField, kField, mField) VALUES (?, ?, ?, ?, ?)"
           )
         }
         "two level nesting" in {
           insert[ATable].values[ETable].apply() mustEqual Valid(
-            "INSERT INTO ATable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
+            "INSERT INTO ATable (nField, lField, iField, jField, kField, mField, oField) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
       }
@@ -182,16 +182,16 @@ class SyntaxSpec extends Specification with PrepyDomain {
       "update all query" in {
         "without condition" in {
           update[ATable].set[ATable].apply() mustEqual Valid(
-            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ?"
+            "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ?"
           )
         }
 
         "with single condition" in {
           update[ATable]
             .set[ATable]
-            .where("i == 1")
+            .where("iField == 1")
             .apply() mustEqual Valid(
-            "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1)"
+            "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1)"
           )
         }
 
@@ -199,49 +199,49 @@ class SyntaxSpec extends Specification with PrepyDomain {
           "single AND condition" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
+              .where("iField == 1")
+              .and("jField == TRUE")
               .apply() mustEqual Valid(
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE)"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE)"
             )
           }
           "multiple AND conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .and("k LIKE '%foo%'")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .and("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) AND (k LIKE '%foo%')"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
+              .where("iField == 1")
+              .or("jField == TRUE")
               .apply() mustEqual Valid(
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE)"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) OR (jField == TRUE)"
             )
           }
           "multiple OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .or("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("iField == 1")
+              .or("jField == TRUE")
+              .or("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) OR (j == TRUE) OR (k LIKE '%foo%')"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("i == 1")
-              .and("j == TRUE")
-              .or("k LIKE '%foo%'")
+              .where("iField == 1")
+              .and("jField == TRUE")
+              .or("kField LIKE '%foo%'")
               .apply() mustEqual Valid(
-              "UPDATE ATable SET i = ?, j = ?, k = ?, l = ?, m = ?, n = ?, o = ?, p = ? WHERE (i == 1) AND (j == TRUE) OR (k LIKE '%foo%')"
+              "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
         }
@@ -249,20 +249,20 @@ class SyntaxSpec extends Specification with PrepyDomain {
 
       "update subset query" in {
         "first three fields" in {
-          update[ATable].set[BTable].apply() mustEqual Valid("UPDATE ATable SET i = ?, j = ?, k = ?")
+          update[ATable].set[BTable].apply() mustEqual Valid("UPDATE ATable SET iField = ?, jField = ?, kField = ?")
         }
         "random fields" in {
-          update[ATable].set[CTable].apply() mustEqual Valid("UPDATE ATable SET i = ?, l = ?, o = ?, p = ?")
+          update[ATable].set[CTable].apply() mustEqual Valid("UPDATE ATable SET iField = ?, lField = ?, oField = ?, pField = ?")
         }
       }
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET l = ?, i = ?, j = ?, k = ?, m = ?")
+          update[ATable].set[DTable].apply() mustEqual Valid("UPDATE ATable SET lField = ?, iField = ?, jField = ?, kField = ?, mField = ?")
         }
         "two level nesting" in {
           update[ATable].set[ETable].apply() mustEqual Valid(
-            "UPDATE ATable SET n = ?, l = ?, i = ?, j = ?, k = ?, m = ?, o = ?"
+            "UPDATE ATable SET nField = ?, lField = ?, iField = ?, jField = ?, kField = ?, mField = ?, oField = ?"
           )
         }
       }
