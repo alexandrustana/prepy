@@ -312,12 +312,12 @@ class DoobieSyntaxSpec extends Specification with PrepyDomain {
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
-          insert[DTable].values[DTable].update().sql.trim mustEqual
-            "INSERT INTO DTable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
+          insert[ATable].values[DTable].update().sql.trim mustEqual
+            "INSERT INTO ATable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
         }
         "two level nesting" in {
-          insert[ETable].values[ETable].update().sql.trim mustEqual
-            "INSERT INTO ETable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
+          insert[ATable].values[ETable].update().sql.trim mustEqual
+            "INSERT INTO ATable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
         }
       }
     }

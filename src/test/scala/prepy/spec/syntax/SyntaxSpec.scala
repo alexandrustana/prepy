@@ -160,13 +160,13 @@ class SyntaxSpec extends Specification with PrepyDomain {
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
-          insert[DTable].values[DTable].apply() mustEqual Valid(
-            "INSERT INTO DTable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
+          insert[ATable].values[DTable].apply() mustEqual Valid(
+            "INSERT INTO ATable (l, i, j, k, m) VALUES (?, ?, ?, ?, ?)"
           )
         }
         "two level nesting" in {
-          insert[ETable].values[ETable].apply() mustEqual Valid(
-            "INSERT INTO ETable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
+          insert[ATable].values[ETable].apply() mustEqual Valid(
+            "INSERT INTO ATable (n, l, i, j, k, m, o) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
       }

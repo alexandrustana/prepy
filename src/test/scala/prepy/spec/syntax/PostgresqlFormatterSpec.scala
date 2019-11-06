@@ -194,13 +194,13 @@ class PostgresqlFormatterSpec extends Specification {
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
-          insert[DTable].values[DTable].apply() mustEqual Valid(
-            "INSERT INTO d_table (l_field, i_field, j_field, k_field, m_field) VALUES (?, ?, ?, ?, ?)"
+          insert[ATable].values[DTable].apply() mustEqual Valid(
+            "INSERT INTO a_table (l_field, i_field, j_field, k_field, m_field) VALUES (?, ?, ?, ?, ?)"
           )
         }
         "two level nesting" in {
-          insert[ETable].values[ETable].apply() mustEqual Valid(
-            "INSERT INTO e_table (n_field, l_field, i_field, j_field, k_field, m_field, o_field) VALUES (?, ?, ?, ?, ?, ?, ?)"
+          insert[ATable].values[ETable].apply() mustEqual Valid(
+            "INSERT INTO a_table (n_field, l_field, i_field, j_field, k_field, m_field, o_field) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
       }
