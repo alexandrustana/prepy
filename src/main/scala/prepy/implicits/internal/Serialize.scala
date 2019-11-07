@@ -23,10 +23,10 @@ private[implicits] trait Serialize extends FlattenPoly {
     SymbolRepr <: HList,
     FieldRepr <: HList
   ](
-    implicit generic: LabelledGeneric.Aux[Entity, EntityRepr],
-    flatMap:          FlatMapper.Aux[complexPoly.type, EntityRepr, FlatEntityRepr],
-    toList:           ToList[FlatEntityRepr, Symbol],
-    fill:             FillWith[witnessPoly.type, FlatEntityRepr]
+     implicit generic: LabelledGeneric.Aux[Entity, EntityRepr],
+     flatMap:          FlatMapper.Aux[flattenNestedNames.type, EntityRepr, FlatEntityRepr],
+     toList:           ToList[FlatEntityRepr, Symbol],
+     fill:             FillWith[witnessPoly.type, FlatEntityRepr]
   ): Serialize[Entity] = {
     pure(toList(fill()))
   }

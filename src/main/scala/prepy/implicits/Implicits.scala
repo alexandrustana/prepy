@@ -23,7 +23,9 @@ object Implicits {
     def apply[T <: Product](implicit inst: Serialize[T]): Serialize[T] = inst
   }
 
-  @implicitNotFound("Cannot build transform function from ${From} to ${To}, possibly due to missing fields in ${To}")
+  @implicitNotFound(
+    "Cannot build transform function from ${From} to ${To}, possibly due to missing fields in ${To} or because the fields in ${To} have different types"
+  )
   trait Transform[From <: Product, To <: Product] {}
 
   object Transform {

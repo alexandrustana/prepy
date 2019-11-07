@@ -9,20 +9,27 @@ trait Validate extends FlattenPoly {
   type Transform[From <: Product, To <: Product] = Implicits.Transform[From, To]
 
   implicit def validateTransformation[
-    F <: Product,
-    T <: Product,
-    ReprF <: HList,
-    ReprT <: HList,
-    FlatF <: HList,
-    FlatT <: HList,
-    TDifF <: HList
+    From <: Product,
+    To <: Product,
+    ReprFrom <: HList,
+    ReprTo <: HList,
+    FlatFromNames <: HList,
+    FlatToNames <: HList,
+    FlatFromTypes <: HList,
+    FlatToTypes <: HList,
+    DiffNames <: HList,
+    DiffTypes <: HList
   ](
-    implicit fromGen: LabelledGeneric.Aux[F, ReprF],
-    toGen:            LabelledGeneric.Aux[T, ReprT],
-    flatFrom:         FlatMapper.Aux[complexPoly.type, ReprF, FlatF],
-    flatTo:           FlatMapper.Aux[complexPoly.type, ReprT, FlatT],
-    diff:             Diff.Aux[FlatT, FlatF, TDifF],
-    isEmpty:          TDifF =:= HNil
-  ): Transform[F, T] = new Transform[F, T] {}
+    implicit genFrom: LabelledGeneric.Aux[From, ReprFrom],
+    genTo:            LabelledGeneric.Aux[To, ReprTo],
+    flatNamesFrom:    FlatMapper.Aux[flattenNestedNames.type, ReprFrom, FlatFromNames],
+    flatNamesTo:      FlatMapper.Aux[flattenNestedNames.type, ReprTo, FlatToNames],
+    flatTypesFrom:    FlatMapper.Aux[flattenNestedTypes.type, ReprFrom, FlatFromTypes],
+    flatTypesTo:      FlatMapper.Aux[flattenNestedTypes.type, ReprTo, FlatToTypes],
+    differentNames:   Diff.Aux[FlatToNames, FlatFromNames, DiffNames],
+    sameFieldNames:   DiffNames =:= HNil,
+    differentTypes:   Diff.Aux[FlatToTypes, FlatFromTypes, DiffTypes],
+    sameFieldTypes:   DiffTypes =:= HNil
+  ): Transform[From, To] = new Transform[From, To] {}
 
 }

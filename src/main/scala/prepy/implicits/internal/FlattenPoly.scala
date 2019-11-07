@@ -4,9 +4,9 @@ import shapeless._
 import shapeless.labelled.FieldType
 import shapeless.ops.hlist.FlatMapper
 
- trait FlattenPoly {
+trait FlattenPoly {
 
-  trait primitivePoly extends Poly1 {
+  trait primitiveFieldName extends Poly1 {
     implicit def primitive[K <: Symbol, V](
       implicit
       witness: Witness.Aux[K]
@@ -15,13 +15,33 @@ import shapeless.ops.hlist.FlatMapper
     }
   }
 
-  object complexPoly extends primitivePoly {
+  object flattenNestedNames extends primitiveFieldName {
     implicit def complex[K <: Symbol, V <: Product, GenV <: HList, FlatV <: HList](
       implicit
       gen:     LabelledGeneric.Aux[V, GenV],
-      flatten: FlatMapper.Aux[complexPoly.type, GenV, FlatV]
+      flatten: FlatMapper.Aux[flattenNestedNames.type, GenV, FlatV]
     ): Case.Aux[FieldType[K, V], FlatV] = {
       at[FieldType[K, V]](t => flatten(gen.to(t)))
     }
   }
+
+  trait primitiveFieldType extends Poly1 {
+    implicit def primitive[K <: Symbol, V](
+      implicit
+      witness: Witness.Aux[K]
+    ): Case.Aux[FieldType[K, V], V :: HNil] = {
+      at[FieldType[K, V]](t => t :: HNil)
+    }
+  }
+
+  object flattenNestedTypes extends primitiveFieldType {
+    implicit def complex[K <: Symbol, V <: Product, GenV <: HList, FlatV <: HList](
+      implicit
+      gen:     LabelledGeneric.Aux[V, GenV],
+      flatten: FlatMapper.Aux[flattenNestedTypes.type, GenV, FlatV]
+    ): Case.Aux[FieldType[K, V], FlatV] = {
+      at[FieldType[K, V]](t => flatten(gen.to(t)))
+    }
+  }
+
 }
