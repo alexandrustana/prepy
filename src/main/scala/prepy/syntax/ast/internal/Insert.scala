@@ -3,24 +3,25 @@ package prepy.syntax.ast.internal
 import cats.data.Validated.Invalid
 import prepy.formatter.{Formatter, IdentityFormatter}
 import shapeless.Typeable
-import prepy.implicits.Implicits.Domain
+import prepy.implicits.Implicits.{Serialize, Transform}
 
 private[prepy] trait Insert {
 
   def insert[T <: Product](
     implicit typeable: Typeable[T],
     formatter:         Formatter = IdentityFormatter
-  ): Insert.`insertT` =
-    Insert.`insertT`(typeable.describe, formatter)
+  ): Insert.`insertT`[T] =
+    Insert.`insertT`[T](typeable.describe, formatter)
 
 }
 
 object Insert {
-  private[syntax] case class `insertT`(tableName: String, formatter: Formatter) extends Query {
+  private[syntax] case class `insertT`[T <: Product](tableName: String, formatter: Formatter) extends Query {
     override def apply() =
       Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`")
 
-    def values[K <: Product](implicit inst: Domain[K]): `valuesT`[K] = `valuesT`[K](this, inst.fields, formatter)
+    def values[K <: Product](implicit inst: Serialize[K], transform: Transform[T, K]): `valuesT`[K] =
+      `valuesT`[K](this, inst.fields, formatter)
 
     override def toString: String = s"INSERT INTO ${formatter(tableName)}"
   }

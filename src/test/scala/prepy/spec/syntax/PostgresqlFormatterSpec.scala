@@ -1,33 +1,13 @@
-package prepy
+package prepy.spec.syntax
 
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
-import prepy.syntax._
+import prepy.TestDomain
 import prepy.formatter.postgresql._
+import prepy.syntax._
 import shapeless.cachedImplicit
 
-class PostgresqlFormatterSpec extends Specification {
-
-  case class ATable(
-    iField: Int,
-    jField: Boolean,
-    kField: String,
-    lField: Char,
-    mField: Double,
-    nField: Double,
-    oField: List[Int],
-    pField: Option[Float]
-  )
-  case class BTable(iField: Int, jField: Boolean, kField: String)
-  case class CTable(iField: Int, lField: Char, oField:    List[Int], pField: Option[Float])
-  case class DTable(aField: Int, bField: BTable, cField:  String)
-  case class ETable(dField: Int, eField: DTable, fField:  String)
-
-  implicit val aDomain = cachedImplicit[Domain[ATable]]
-  implicit val bDomain = cachedImplicit[Domain[BTable]]
-  implicit val cDomain = cachedImplicit[Domain[CTable]]
-  implicit val dDomain = cachedImplicit[Domain[DTable]]
-  implicit val EDomain = cachedImplicit[Domain[ETable]]
+class PostgresqlFormatterSpec extends Specification with TestDomain with TestImplicits {
 
   "select" should {
 
@@ -112,12 +92,12 @@ class PostgresqlFormatterSpec extends Specification {
       "select * from nested product" in {
         "one level nesting" in {
           select[DTable].from[ATable].apply() mustEqual Valid(
-            "SELECT a_field, i_field, j_field, k_field, c_field FROM a_table"
+            "SELECT l_field, i_field, j_field, k_field, m_field FROM a_table"
           )
         }
         "two level nesting" in {
           select[ETable].from[ATable].apply() mustEqual Valid(
-            "SELECT d_field, a_field, i_field, j_field, k_field, c_field, f_field FROM a_table"
+            "SELECT n_field, l_field, i_field, j_field, k_field, m_field, o_field FROM a_table"
           )
         }
       }
@@ -194,13 +174,13 @@ class PostgresqlFormatterSpec extends Specification {
       }
       "insert all fields from nested product" in {
         "one level nesting" in {
-          insert[DTable].values[DTable].apply() mustEqual Valid(
-            "INSERT INTO d_table (a_field, i_field, j_field, k_field, c_field) VALUES (?, ?, ?, ?, ?)"
+          insert[ATable].values[DTable].apply() mustEqual Valid(
+            "INSERT INTO a_table (l_field, i_field, j_field, k_field, m_field) VALUES (?, ?, ?, ?, ?)"
           )
         }
         "two level nesting" in {
-          insert[ETable].values[ETable].apply() mustEqual Valid(
-            "INSERT INTO e_table (d_field, a_field, i_field, j_field, k_field, c_field, f_field) VALUES (?, ?, ?, ?, ?, ?, ?)"
+          insert[ATable].values[ETable].apply() mustEqual Valid(
+            "INSERT INTO a_table (n_field, l_field, i_field, j_field, k_field, m_field, o_field) VALUES (?, ?, ?, ?, ?, ?, ?)"
           )
         }
       }
@@ -295,12 +275,12 @@ class PostgresqlFormatterSpec extends Specification {
       "update from nested product" in {
         "one level nesting" in {
           update[ATable].set[DTable].apply() mustEqual Valid(
-            "UPDATE a_table SET a_field = ?, i_field = ?, j_field = ?, k_field = ?, c_field = ?"
+            "UPDATE a_table SET l_field = ?, i_field = ?, j_field = ?, k_field = ?, m_field = ?"
           )
         }
         "two level nesting" in {
           update[ATable].set[ETable].apply() mustEqual Valid(
-            "UPDATE a_table SET d_field = ?, a_field = ?, i_field = ?, j_field = ?, k_field = ?, c_field = ?, f_field = ?"
+            "UPDATE a_table SET n_field = ?, l_field = ?, i_field = ?, j_field = ?, k_field = ?, m_field = ?, o_field = ?"
           )
         }
       }
