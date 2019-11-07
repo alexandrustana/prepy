@@ -25,7 +25,7 @@ Prepy is available on Scala 2.12, 2.13
 
 ```scala
 
- libraryDependencies += "com.github.alexandrustana" %% "prepy" % "0.0.2"
+ libraryDependencies += "com.github.alexandrustana" %% "prepy" % "0.0.3"
 
 ```
 
