@@ -10,6 +10,8 @@ private[doobie] trait Update {
     def update(): doobie.Update[O] = doobie.Update[O](elem.toString, None)
 
     def where(fr: Fragment): Update.`whereD`[O] = Update.`whereD`[O](elem, fr)
+
+    def where(fr: Option[Fragment]): Update.`whereD`[O] = new Update.`whereD`[O](elem, fr)
   }
 
   implicit class `updateFilterD`[O <: Product](elem: Update.logicalOpD[_] { type Out = O })(

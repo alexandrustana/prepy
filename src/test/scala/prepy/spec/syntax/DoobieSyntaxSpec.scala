@@ -17,7 +17,9 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
   "select" should {
 
     "be equal" in {
+
       "select query" in {
+
         "without condition" in {
           select[ATable]
             .from[ATable]
@@ -100,7 +102,6 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .where(fr0"iField == $iField")
               .query()
               .sql
-              .trim
               .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == ?)"
           }
 
@@ -169,7 +170,6 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .where(iField.toNel.map(i => in(fr"iField", i)))
               .query()
               .sql
-              .trim
               .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) )"
           }
 
@@ -259,8 +259,11 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
   }
 
   "delete" should {
+
     "be equal" in {
+
       "delete from" in {
+
         "without condition" in {
           delete[ATable].update().sql.trim mustEqual "DELETE FROM ATable"
         }
@@ -274,6 +277,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
         }
 
         "with multiple conditions" in {
+
           "single AND condition" in {
             delete[ATable]
               .where(fr0"iField == 1")
@@ -282,6 +286,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .sql
               .trim mustEqual "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE)"
           }
+
           "multiple AND conditions" in {
             delete[ATable]
               .where(fr0"iField == 1")
@@ -292,6 +297,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .trim mustEqual
               "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
           }
+
           "single OR condition" in {
             delete[ATable]
               .where(fr0"iField == 1")
@@ -300,6 +306,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .sql
               .trim mustEqual "DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE)"
           }
+
           "multiple OR conditions" in {
             delete[ATable]
               .where(fr0"iField == 1")
@@ -310,6 +317,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .trim mustEqual
               "DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
           }
+
           "mixed AND with OR conditions" in {
             delete[ATable]
               .where(fr0"iField == 1")
@@ -343,6 +351,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
                 .sql
                 .trim mustEqual "DELETE FROM ATable WHERE (iField == ?) AND (jField == ?)"
             }
+
             "multiple AND conditions" in {
               delete[ATable]
                 .where(fr0"iField == $iField")
@@ -353,6 +362,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
                 .trim mustEqual
                 "DELETE FROM ATable WHERE (iField == ?) AND (jField == ?) AND (kField LIKE '%?%')"
             }
+
             "single OR condition" in {
               delete[ATable]
                 .where(fr0"iField == $iField")
@@ -361,6 +371,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
                 .sql
                 .trim mustEqual "DELETE FROM ATable WHERE (iField == ?) OR (jField == ?)"
             }
+
             "multiple OR conditions" in {
               delete[ATable]
                 .where(fr0"iField == $iField")
@@ -371,6 +382,7 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
                 .trim mustEqual
                 "DELETE FROM ATable WHERE (iField == ?) OR (jField == ?) OR (kField LIKE '%?%')"
             }
+
             "mixed AND with OR conditions" in {
               delete[ATable]
                 .where(fr0"iField == $iField")
@@ -380,6 +392,68 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
                 .sql
                 .trim mustEqual
                 "DELETE FROM ATable WHERE (iField == ?) AND (jField == ?) OR (kField LIKE '%?%')"
+            }
+          }
+        }
+
+        "with optional conditions" in {
+          val iField = List(1, 2, 3)
+          val jField = List(true, false)
+          val kField = List("foo", "boo")
+          "single condition" in {
+            delete[ATable]
+              .where(iField.toNel.map(i => in(fr"iField", i)))
+              .update()
+              .sql
+              .trim mustEqual "DELETE FROM ATable WHERE (iField IN (?, ?, ?) )"
+          }
+
+          "multiple conditions" in {
+            "single AND condition" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) )"
+            }
+            "multiple AND conditions" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .and(kField.toNel.map(k => in(fr"kField", k)))
+                .update()
+                .sql
+                .trim mustEqual
+                "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) ) AND (kField IN (?, ?) )"
+            }
+            "single OR condition" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(jField.toNel.map(j => in(fr"jField", j)))
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) OR (jField IN (?, ?) )"
+            }
+            "multiple OR conditions" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(jField.toNel.map(j => in(fr"jField", j)))
+                .or(kField.toNel.map(k => in(fr"kField", k)))
+                .update()
+                .sql
+                .trim mustEqual
+                "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) OR (jField IN (?, ?) ) OR (kField IN (?, ?) )"
+            }
+            "mixed AND with OR conditions" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .or(kField.toNel.map(k => in(fr"kField", k)))
+                .update()
+                .sql
+                .trim mustEqual
+                "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) ) OR (kField IN (?, ?) )"
             }
           }
         }
@@ -548,6 +622,74 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
                 .sql
                 .trim mustEqual
                 "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == ?) AND (jField == ?) OR (kField LIKE '%?%')"
+            }
+          }
+        }
+
+        "with optional conditions" in {
+          val iField = List(1, 2, 3)
+          val jField = List(true, false)
+          val kField = List("foo", "boo")
+          "single condition" in {
+            update[ATable]
+              .set[ATable]
+              .where(iField.toNel.map(i => in(fr"iField", i)))
+              .update()
+              .sql
+              .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) )"
+          }
+
+          "multiple conditions" in {
+            "single AND condition" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .update()
+                .sql
+                .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) )"
+            }
+            "multiple AND conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .and(kField.toNel.map(k => in(fr"kField", k)))
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) ) AND (kField IN (?, ?) )"
+            }
+            "single OR condition" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(jField.toNel.map(j => in(fr"jField", j)))
+                .update()
+                .sql
+                .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) OR (jField IN (?, ?) )"
+            }
+            "multiple OR conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(jField.toNel.map(j => in(fr"jField", j)))
+                .or(kField.toNel.map(k => in(fr"kField", k)))
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) OR (jField IN (?, ?) ) OR (kField IN (?, ?) )"
+            }
+            "mixed AND with OR conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .or(kField.toNel.map(k => in(fr"kField", k)))
+                .update()
+                .sql
+                .trim mustEqual
+                "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) ) OR (kField IN (?, ?) )"
             }
           }
         }
