@@ -13,10 +13,6 @@ object Implicits {
     type Entity = T
 
     val fields: List[Symbol]
-
-    override def toString: String =
-      s"""COLUMNS : $fields
-         |""".stripMargin
   }
 
   object Serialize {

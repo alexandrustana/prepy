@@ -173,6 +173,49 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) )"
           }
 
+          "missing conditions" in {
+
+            "missing where" in {
+              select[ATable]
+                .from[ATable]
+                .where(None)
+                .query()
+                .sql
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (TRUE )"
+            }
+
+            "missing and" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(None)
+                .query()
+                .sql
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) AND (TRUE )"
+            }
+
+            "missing or" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(None)
+                .query()
+                .sql
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) OR (FALSE )"
+            }
+
+            "missing multiple conditions" in {
+              select[ATable]
+                .from[ATable]
+                .where(None)
+                .or(None)
+                .and(None)
+                .query()
+                .sql
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (TRUE ) OR (FALSE ) AND (TRUE )"
+            }
+          }
+
           "multiple conditions" in {
             "single AND condition" in {
               select[ATable]
@@ -408,6 +451,45 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .trim mustEqual "DELETE FROM ATable WHERE (iField IN (?, ?, ?) )"
           }
 
+          "missing conditions" in {
+
+            "missing where" in {
+              delete[ATable]
+                .where(None)
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (TRUE )"
+            }
+
+            "missing and" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(None)
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) AND (TRUE )"
+            }
+
+            "missing or" in {
+              delete[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(None)
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (iField IN (?, ?, ?) ) OR (FALSE )"
+            }
+
+            "missing multiple conditions" in {
+              delete[ATable]
+                .where(None)
+                .or(None)
+                .and(None)
+                .update()
+                .sql
+                .trim mustEqual "DELETE FROM ATable WHERE (TRUE ) OR (FALSE ) AND (TRUE )"
+            }
+          }
+
           "multiple conditions" in {
             "single AND condition" in {
               delete[ATable]
@@ -637,6 +719,49 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
               .update()
               .sql
               .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) )"
+          }
+
+          "missing conditions" in {
+
+            "missing where" in {
+              update[ATable]
+                .set[ATable]
+                .where(None)
+                .update()
+                .sql
+                .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (TRUE )"
+            }
+
+            "missing and" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(None)
+                .update()
+                .sql
+                .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) AND (TRUE )"
+            }
+
+            "missing or" in {
+              update[ATable]
+                .set[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(None)
+                .update()
+                .sql
+                .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField IN (?, ?, ?) ) OR (FALSE )"
+            }
+
+            "missing multiple conditions" in {
+              update[ATable]
+                .set[ATable]
+                .where(None)
+                .or(None)
+                .and(None)
+                .update()
+                .sql
+                .trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (TRUE ) OR (FALSE ) AND (TRUE )"
+            }
           }
 
           "multiple conditions" in {
