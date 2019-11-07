@@ -1,5 +1,7 @@
 package prepy.spec.syntax
 
+import cats.implicits._
+import doobie.Fragments.in
 import doobie.implicits._
 import doobie.util.Meta
 import org.specs2.mutable._
@@ -17,7 +19,11 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
     "be equal" in {
       "select query" in {
         "without condition" in {
-          select[ATable].from[ATable].query().sql.trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable"
+          select[ATable]
+            .from[ATable]
+            .query()
+            .sql
+            .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable"
         }
 
         "with single condition" in {
@@ -152,6 +158,75 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
             }
           }
         }
+
+        "with optional conditions" in {
+          val iField = List(1, 2, 3)
+          val jField = List(true, false)
+          val kField = List("foo", "boo")
+          "single condition" in {
+            select[ATable]
+              .from[ATable]
+              .where(iField.toNel.map(i => in(fr"iField", i)))
+              .query()
+              .sql
+              .trim
+              .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) )"
+          }
+
+          "multiple conditions" in {
+            "single AND condition" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .query()
+                .sql
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) )"
+            }
+            "multiple AND conditions" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .and(kField.toNel.map(k => in(fr"kField", k)))
+                .query()
+                .sql
+                .trim mustEqual
+                "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) ) AND (kField IN (?, ?) )"
+            }
+            "single OR condition" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(jField.toNel.map(j => in(fr"jField", j)))
+                .query()
+                .sql
+                .trim mustEqual "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) OR (jField IN (?, ?) )"
+            }
+            "multiple OR conditions" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .or(jField.toNel.map(j => in(fr"jField", j)))
+                .or(kField.toNel.map(k => in(fr"kField", k)))
+                .query()
+                .sql
+                .trim mustEqual
+                "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) OR (jField IN (?, ?) ) OR (kField IN (?, ?) )"
+            }
+            "mixed AND with OR conditions" in {
+              select[ATable]
+                .from[ATable]
+                .where(iField.toNel.map(i => in(fr"iField", i)))
+                .and(jField.toNel.map(j => in(fr"jField", j)))
+                .or(kField.toNel.map(k => in(fr"kField", k)))
+                .query()
+                .sql
+                .trim mustEqual
+                "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField IN (?, ?, ?) ) AND (jField IN (?, ?) ) OR (kField IN (?, ?) )"
+            }
+          }
+        }
       }
 
       "select subset query" in {
@@ -165,10 +240,18 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
 
       "select * from nested product" in {
         "one level nesting" in {
-          select[DTable].from[ATable].query().sql.trim mustEqual "SELECT lField, iField, jField, kField, mField FROM ATable"
+          select[DTable]
+            .from[ATable]
+            .query()
+            .sql
+            .trim mustEqual "SELECT lField, iField, jField, kField, mField FROM ATable"
         }
         "two level nesting" in {
-          select[ETable].from[ATable].query().sql.trim mustEqual "SELECT nField, lField, iField, jField, kField, mField, oField FROM ATable"
+          select[ETable]
+            .from[ATable]
+            .query()
+            .sql
+            .trim mustEqual "SELECT nField, lField, iField, jField, kField, mField, oField FROM ATable"
         }
       }
 
@@ -475,13 +558,21 @@ class DoobieSyntaxSpec extends Specification with TestDomain with TestImplicits 
           update[ATable].set[BTable].update().sql.trim mustEqual "UPDATE ATable SET iField = ?, jField = ?, kField = ?"
         }
         "random fields" in {
-          update[ATable].set[CTable].update().sql.trim mustEqual "UPDATE ATable SET iField = ?, lField = ?, oField = ?, pField = ?"
+          update[ATable]
+            .set[CTable]
+            .update()
+            .sql
+            .trim mustEqual "UPDATE ATable SET iField = ?, lField = ?, oField = ?, pField = ?"
         }
       }
 
       "update from nested product" in {
         "one level nesting" in {
-          update[ATable].set[DTable].update().sql.trim mustEqual "UPDATE ATable SET lField = ?, iField = ?, jField = ?, kField = ?, mField = ?"
+          update[ATable]
+            .set[DTable]
+            .update()
+            .sql
+            .trim mustEqual "UPDATE ATable SET lField = ?, iField = ?, jField = ?, kField = ?, mField = ?"
         }
         "two level nesting" in {
           update[ATable].set[ETable].update().sql.trim mustEqual

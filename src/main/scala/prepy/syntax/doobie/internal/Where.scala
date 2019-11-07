@@ -15,22 +15,37 @@ private[internal] trait Where extends internal {
 
     def and(predicate: Fragment): `andD`[T] = `andD`[T](this, predicate)
     def or(predicate:  Fragment): `orD`[T]  = `orD`[T](this, predicate)
+
+    def and(predicate: Option[Fragment]): `andD`[T] = new `andD`[T](this, predicate)
+    def or(predicate:  Option[Fragment]): `orD`[T]  = new `orD`[T](this, predicate)
   }
 
   private[internal] case class `whereD`[T <: Product](elem: Query, predicate: Fragment)
       extends logicalOpD[T](elem, predicate) {
+    def this(elem: Query, predicate: Option[Fragment]) =
+      this(elem, predicate.getOrElse(Fragment.empty))
 
     def compile(): Fragment = Fragment.const(s"${elem.toString} WHERE") ++ parentheses(predicate)
   }
 
   private[internal] case class `andD`[T <: Product](elem: logicalOpD[T], predicate: Fragment)
       extends logicalOpD[T](elem, predicate) {
+    def this(elem: logicalOpD[T], predicate: Option[Fragment]) =
+      this(elem, predicate.getOrElse(Fragment.empty))
+
+    def apply[K <: Product](elem: logicalOpD[K], predicate: Option[Fragment]): `andD`[K] =
+      `andD`[K](elem, predicate.getOrElse(Fragment.empty))
 
     def compile(): Fragment = elem.compile() ++ fr"AND" ++ parentheses(predicate)
   }
 
   private[internal] case class `orD`[T <: Product](elem: logicalOpD[T], predicate: Fragment)
       extends logicalOpD[T](elem, predicate) {
+    def this(elem: logicalOpD[T], predicate: Option[Fragment]) =
+      this(elem, predicate.getOrElse(Fragment.empty))
+
+    def apply[K <: Product](elem: logicalOpD[K], predicate: Option[Fragment]): `orD`[K] =
+      `orD`[K](elem, predicate.getOrElse(Fragment.empty))
 
     def compile(): Fragment = elem.compile() ++ fr"OR" ++ parentheses(predicate)
   }

@@ -11,6 +11,8 @@ private[doobie] trait Select {
     def query(): Query0[O] = Query0[O](elem.toString)
 
     def where(fr: Fragment): Select.`whereD`[O] = Select.`whereD`[O](elem, fr)
+
+    def where(fr: Option[Fragment]): Select.`whereD`[O] = new Select.`whereD`[O](elem, fr)
   }
 
   implicit class `selectFilterD`[O <: Product](elem: Select.logicalOpD[_] { type Out = O })(
