@@ -43,16 +43,16 @@ object Select extends Where {
       extends Query {
     type Out = O
 
-    def on[S <: Product](f: S => Option[Boolean]): `onT`[Out, T] = `onT`[Out, T](elem, , formatter)
+    def on(f: T => Boolean): `onT`[Out, T] = `onT`[Out, T](elem, f, formatter)
 
     override def toString: String = s"$elem INNER JOIN ${formatter(table)}"
   }
 
-  private[syntax] case class `onT`[O, T <: Coproduct](elem: Query, f: T => Option[Boolean], formatter: Formatter)
+  private[syntax] case class `onT`[O, T <: Coproduct](elem: Query, f: T => Boolean, formatter: Formatter)
       extends Query {
     type Out = O
 
-    def where(f: T => Option[Boolean]): `whereT`[O, T] =
+    def where(f: T => Boolean): `whereT`[O, T] =
       `whereT`[O, T](this, "WHERE function (T*) => Boolean")
 
     def join[K <: Product](implicit typeable: Typeable[K]): `joinT`[O, K :+: T] =
