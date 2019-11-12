@@ -4,16 +4,10 @@ import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
 import prepy.TestDomain
 import prepy.syntax._
-import shapeless.Coproduct
 
 class SyntaxSpec extends Specification with TestDomain with TestImplicits {
 
   "select" should {
-
-    select[ATable]
-      .from[ATable]
-      .join[BTable]
-      .on(b => ???)
 
     "be equal" in {
       "select query" in {

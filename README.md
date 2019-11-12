@@ -16,7 +16,7 @@ Generates string sql queries based on the structure of case classes, this minimi
 
 ### `prepy.syntax.doobie`
 
-Easy way of generating doobie queries without have to manully write out queries. e.g. `insert[A].values[A].update()`
+Easy way of generating doobie queries without have to manually write out queries. e.g. `insert[A].values[A].update()`
 
 
 ## Get started

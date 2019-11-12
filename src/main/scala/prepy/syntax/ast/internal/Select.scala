@@ -4,7 +4,8 @@ import cats.data.Validated.Invalid
 import prepy.formatter.{Formatter, IdentityFormatter}
 import prepy.implicits.Implicits._
 import shapeless.ops.hlist.IsHCons
-import shapeless.{:+:, CNil, Coproduct, HList, HNil, Typeable}
+import shapeless.ops.coproduct.Selector
+import shapeless.{:+:, CNil, Coproduct, HList, HNil, Poly1, Typeable}
 
 private[syntax] trait Select {
 
@@ -31,7 +32,7 @@ object Select extends Where {
   ) extends Query {
     type Out = O
 
-    def where(f: T => Boolean): `whereT`[O, T :+: CNil] = `whereT`[O, T :+: CNil](this, "WHERE function T => Boolean")
+    def where(condition: T => Boolean): `whereT`[O, T :+: CNil] = `whereT`[O, T :+: CNil](this, "WHERE function T => Boolean")
 
     def join[K <: Product](implicit typeable: Typeable[K]): `joinT`[O, K :+: T :+: CNil] =
       `joinT`[O, K :+: T :+: CNil](elem, typeable.describe, formatter)
@@ -43,19 +44,25 @@ object Select extends Where {
       extends Query {
     type Out = O
 
-    def on(f: T => Boolean): `onT`[Out, T] = `onT`[Out, T](elem, f, formatter)
+    override def apply() =
+      Invalid("Incomplete SQL query. `join[T]` must be followed by a `on[S](S => Boolean)`")
+
+    def on[S <: Product](condition: S => Boolean)(implicit selector: Selector[T, S]): `onT`[Out, T] =
+      `onT`[Out, T](elem, condition, formatter)
 
     override def toString: String = s"$elem INNER JOIN ${formatter(table)}"
   }
 
-  private[syntax] case class `onT`[O, T <: Coproduct](elem: Query, f: T => Boolean, formatter: Formatter)
+  private[syntax] case class `onT`[O, T <: Coproduct](elem: Query, f: (_ <: Product) => Boolean, formatter: Formatter)
       extends Query {
     type Out = O
 
-    def where(f: T => Boolean): `whereT`[O, T] =
-      `whereT`[O, T](this, "WHERE function (T*) => Boolean")
+    def where[S <: Product](condition: S => Boolean)(implicit selector: Selector[T, S]): `whereT`[O, T] =
+      `whereT`[O, T](this, "WHERE function T => Boolean")
 
     def join[K <: Product](implicit typeable: Typeable[K]): `joinT`[O, K :+: T] =
       `joinT`[O, K :+: T](elem, typeable.describe, formatter)
+
+    override def toString: String = s"$elem ON function S => Boolean"
   }
 }
