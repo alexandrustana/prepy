@@ -33,6 +33,6 @@ case class Lte[T](operand1: Component[T], operand2: Component[T]) extends Compar
 object Demo {
   Add(Add(Constant(1), Constant(2)), Constant(3))
   And(Constant(1), Constant(2))
-  Eq(Constant(3),  Add(Constant(1), Constant(2)))
+  Eq(Eq(Constant(3),  Add(Constant(1), Constant(2))), Constant(1))
   Add(Variable("a"), Constant(3))
 }
