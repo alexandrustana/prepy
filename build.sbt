@@ -26,5 +26,5 @@ lazy val syntax = (project in file("syntax"))
   .settings(Publish.sonatypeSettings)
   .settings(Compiler.commonSettings)
   .settings(
-    libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.spire)
+    libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.spire, libs.macros)
   )
