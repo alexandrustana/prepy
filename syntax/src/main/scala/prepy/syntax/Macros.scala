@@ -12,15 +12,24 @@ object Macros {
     tree match {
       case Select(_, TermName(x)) => Variable(x)
       case Literal(Constant(a))   => Value(a)
+      case q"$a + $b"             => Add(getComponent(a), getComponent(b))
+      case q"$a - $b"             => Subtract(getComponent(a), getComponent(b))
+      case q"$a * $b"             => Multiply(getComponent(a), getComponent(b))
+      case q"$a / $b"             => Divide(getComponent(a), getComponent(b))
+      case q"$a % $b"             => Modulo(getComponent(a), getComponent(b))
       case q"$a == $b"            => Eq(getComponent(a), getComponent(b))
       case q"$a != $b"            => Neq(getComponent(a), getComponent(b))
       case q"$a > $b"             => Gt(getComponent(a), getComponent(b))
       case q"$a >= $b"            => Gte(getComponent(a), getComponent(b))
       case q"$a < $b"             => Lt(getComponent(a), getComponent(b))
       case q"$a <= $b"            => Lte(getComponent(a), getComponent(b))
+      case q"$a & $b"             => BitAnd(getComponent(a), getComponent(b))
+      case q"$a | $b"             => BitOr(getComponent(a), getComponent(b))
+      case q"$a ^ $b"             => ExclusiveOr(getComponent(a), getComponent(b))
       case q"$a && $b"            => LogicalAnd(getComponent(a), getComponent(b))
       case q"$a || $b"            => LogicalOr(getComponent(a), getComponent(b))
     }
+
   }
 
   def stringify[T <: Product](f: T => Boolean): String = macro impl[T]
