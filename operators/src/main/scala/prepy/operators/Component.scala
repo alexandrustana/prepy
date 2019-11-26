@@ -1,4 +1,4 @@
-package prepy.syntax
+package prepy.operators
 
 import scala.reflect.macros.blackbox
 
@@ -6,7 +6,10 @@ trait Component {
   def stringify(implicit c: blackbox.Context): String
 }
 case class Value(value: Any) extends Component {
-  override def stringify(implicit c: blackbox.Context): String = value.toString
+  override def stringify(implicit c: blackbox.Context): String = value match {
+    case _: String | _: Char => s"""'$value'"""
+    case _ => value.toString
+  }
 }
 case class Variable(name: String) extends Component {
   override def stringify(implicit c: blackbox.Context): String = s"$name"

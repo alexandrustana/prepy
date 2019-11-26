@@ -1,13 +1,16 @@
-package prepy.syntax
+package prepy
+
+import prepy.operators._
+
 import scala.language.experimental.macros
 import scala.reflect.api.Trees
 import scala.reflect.macros.blackbox
 
-object Macros {
+package object operators {
 
   private def getComponent[T](
-    tree:       Trees#Tree
-  )(implicit c: blackbox.Context): Component = {
+                               tree:       Trees#Tree
+                             )(implicit c: blackbox.Context): Component = {
     import c.universe._
     tree match {
       case Select(_, TermName(x)) => Variable(x)
@@ -37,7 +40,7 @@ object Macros {
   def impl[T: c.WeakTypeTag](c: blackbox.Context)(f: c.Expr[T => Boolean]): c.Expr[String] = {
     import c.universe._
 
-    val Function(List(ValDef(_, name, _, _)), funcBody) = f.tree
+    val Function(List(ValDef(_, _, _, _)), funcBody) = f.tree
 
     val components = getComponent[T](funcBody)(c)
 

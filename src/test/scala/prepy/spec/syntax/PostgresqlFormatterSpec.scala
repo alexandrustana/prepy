@@ -5,7 +5,6 @@ import org.specs2.mutable._
 import prepy.TestDomain
 import prepy.formatter.postgresql._
 import prepy.syntax._
-import shapeless.cachedImplicit
 
 class PostgresqlFormatterSpec extends Specification with TestDomain with TestImplicits {
 

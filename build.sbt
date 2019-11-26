@@ -20,10 +20,9 @@ lazy val root = (project in file("."))
     name := "prepy",
     libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.doobie)
   )
-  .aggregate(syntax)
+  .dependsOn(operators)
 
-lazy val syntax = (project in file("syntax"))
-  .settings(Publish.sonatypeSettings)
+lazy val operators = (project in file("operators"))
   .settings(Compiler.commonSettings)
   .settings(
     libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.spire, libs.macros)
