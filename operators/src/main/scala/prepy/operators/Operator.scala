@@ -31,7 +31,7 @@ case class Add(operand1:      Operator, operand2: Operator) extends ArithmeticOp
 case class Subtract(operand1: Operator, operand2: Operator) extends ArithmeticOperation(operand1, operand2, "-")
 case class Multiply(operand1: Operator, operand2: Operator) extends ArithmeticOperation(operand1, operand2, "*")
 case class Divide(operand1:   Operator, operand2: Operator) extends ArithmeticOperation(operand1, operand2, "/")
-case class Modulo(operand1:   Operator, operand2: Operator) extends ArithmeticOperation(operand1, operand2, "+")
+case class Modulo(operand1:   Operator, operand2: Operator) extends ArithmeticOperation(operand1, operand2, "MOD")
 
 abstract class BitwiseOperation(operand1: Operator, operand2: Operator, op: String)
     extends Expression(operand1, operand2, op)
