@@ -33,7 +33,8 @@ package object operators {
       case q"$a ^ $b"                                                     => ExclusiveOr(getComponent(a), getComponent(b))
       case q"$a && $b"                                                    => LogicalAnd(getComponent(a), getComponent(b))
       case q"$a || $b"                                                    => LogicalOr(getComponent(a), getComponent(b))
-//      case q"$a between $b and $c" => Between(getComponent(a), getComponent(b), getComponent(c))
+      case Apply(Select(Apply(Select(Apply(_, List(e)), TermName("between")), List(l)), TermName("and")), List(r)) =>
+        Between(getComponent(e), getComponent(l), getComponent(r))
       case Apply(Select(Apply(_, List(a)), (TermName("like"))), List(b)) => Like(getComponent(a), getComponent(b))
       case Apply(Select(Apply(_, List(a)), (TermName("in"))), List(b))   => In(getComponent(a), getComponent(b))
     }
