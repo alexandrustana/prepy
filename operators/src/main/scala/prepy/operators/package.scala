@@ -1,47 +1,45 @@
 package prepy
 
-import prepy.operators._
-
 import scala.language.experimental.macros
 import scala.reflect.api.Trees
 import scala.reflect.macros.blackbox
 
 package object operators {
 
-  private def getComponent[T](
+  private def getExpression[T](
     tree:       Trees#Tree
-  )(implicit c: blackbox.Context): Component = {
+  )(implicit c: blackbox.Context): Operator = {
     import c.universe._
     tree match {
-      case q"$a + $b" => Add(getComponent(a), getComponent(b))
-      case q"$a - $b" => Subtract(getComponent(a), getComponent(b))
-      case q"$a * $b" => Multiply(getComponent(a), getComponent(b))
-      case q"$a / $b" => Divide(getComponent(a), getComponent(b))
-      case q"$a % $b" => Modulo(getComponent(a), getComponent(b))
+      case q"$a + $b" => Add(getExpression(a), getExpression(b))
+      case q"$a - $b" => Subtract(getExpression(a), getExpression(b))
+      case q"$a * $b" => Multiply(getExpression(a), getExpression(b))
+      case q"$a / $b" => Divide(getExpression(a), getExpression(b))
+      case q"$a % $b" => Modulo(getExpression(a), getExpression(b))
 
-      case q"$a == $b" => Eq(getComponent(a), getComponent(b))
-      case q"$a != $b" => Neq(getComponent(a), getComponent(b))
-      case q"$a > $b"  => Gt(getComponent(a), getComponent(b))
-      case q"$a >= $b" => Gte(getComponent(a), getComponent(b))
-      case q"$a < $b"  => Lt(getComponent(a), getComponent(b))
-      case q"$a <= $b" => Lte(getComponent(a), getComponent(b))
+      case q"$a == $b" => Eq(getExpression(a), getExpression(b))
+      case q"$a != $b" => Neq(getExpression(a), getExpression(b))
+      case q"$a > $b"  => Gt(getExpression(a), getExpression(b))
+      case q"$a >= $b" => Gte(getExpression(a), getExpression(b))
+      case q"$a < $b"  => Lt(getExpression(a), getExpression(b))
+      case q"$a <= $b" => Lte(getExpression(a), getExpression(b))
 
-      case q"$a & $b" => BitAnd(getComponent(a), getComponent(b))
-      case q"$a | $b" => BitOr(getComponent(a), getComponent(b))
-      case q"$a ^ $b" => ExclusiveOr(getComponent(a), getComponent(b))
+      case q"$a & $b" => BitAnd(getExpression(a), getExpression(b))
+      case q"$a | $b" => BitOr(getExpression(a), getExpression(b))
+      case q"$a ^ $b" => ExclusiveOr(getExpression(a), getExpression(b))
 
-      case q"$a && $b" => LogicalAnd(getComponent(a), getComponent(b))
-      case q"$a || $b" => LogicalOr(getComponent(a), getComponent(b))
+      case q"$a && $b" => LogicalAnd(getExpression(a), getExpression(b))
+      case q"$a || $b" => LogicalOr(getExpression(a), getExpression(b))
 
       case Select(Ident(TermName(_)), TermName(x))                        => Variable(x)
       case ref @ Select(_, TermName(a))                                   => Value(c.eval(c.Expr[T](c.untypecheck(ref.duplicate))))
-      case Apply(TypeApply(Select(Select(_, TermName("List")), _), _), l) => Value(l.map(getComponent))
+      case Apply(TypeApply(Select(Select(_, TermName("List")), _), _), l) => Value(l.map(getExpression))
       case Literal(Constant(a))                                           => Value(a)
 
       case Apply(Select(Apply(Select(Apply(_, List(e)), TermName("between")), List(l)), TermName("and")), List(r)) =>
-        Between(getComponent(e), getComponent(l), getComponent(r))
-      case Apply(Select(Apply(_, List(a)), (TermName("like"))), List(b)) => Like(getComponent(a), getComponent(b))
-      case Apply(Select(Apply(_, List(a)), (TermName("in"))), List(b))   => In(getComponent(a), getComponent(b))
+        Between(getExpression(e), getExpression(l), getExpression(r))
+      case Apply(Select(Apply(_, List(a)), (TermName("like"))), List(b)) => Like(getExpression(a), getExpression(b))
+      case Apply(Select(Apply(_, List(a)), (TermName("in"))), List(b))   => In(getExpression(a), getExpression(b))
     }
   }
 
@@ -52,8 +50,8 @@ package object operators {
 
     val Function(List(ValDef(_, _, _, _)), funcBody) = f.tree
 
-    val components = getComponent[T](funcBody)(c)
+    val expression = getExpression[T](funcBody)(c)
 
-    c.Expr[String](q"${components.stringify(c)}")
+    c.Expr[String](q"${expression.stringify(c)}")
   }
 }

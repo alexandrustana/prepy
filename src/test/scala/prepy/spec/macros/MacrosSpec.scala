@@ -4,9 +4,8 @@ import org.specs2.mutable._
 import prepy.TestDomain
 import prepy.operators._
 import shapeless.test.illTyped
-import prepy.operators.Helper._
 
-class MacrosSpec extends Specification with TestDomain {
+class MacrosSpec extends Specification with TestDomain with Syntax {
   "stringify" should {
 //    "match the equality check for a int field" in {
 //      stringify[ATable](f => f.iField == 1) mustEqual "iField = 1"

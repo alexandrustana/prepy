@@ -1,6 +1,6 @@
 package prepy.operators
 
-object Helper {
+trait Syntax {
 
   implicit class inSyntax[T](operator1: T) {
     def in(operator2: List[T]): Boolean = operator2.contains(operator1)
