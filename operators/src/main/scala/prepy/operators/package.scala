@@ -13,26 +13,31 @@ package object operators {
   )(implicit c: blackbox.Context): Component = {
     import c.universe._
     tree match {
+      case q"$a + $b" => Add(getComponent(a), getComponent(b))
+      case q"$a - $b" => Subtract(getComponent(a), getComponent(b))
+      case q"$a * $b" => Multiply(getComponent(a), getComponent(b))
+      case q"$a / $b" => Divide(getComponent(a), getComponent(b))
+      case q"$a % $b" => Modulo(getComponent(a), getComponent(b))
+
+      case q"$a == $b" => Eq(getComponent(a), getComponent(b))
+      case q"$a != $b" => Neq(getComponent(a), getComponent(b))
+      case q"$a > $b"  => Gt(getComponent(a), getComponent(b))
+      case q"$a >= $b" => Gte(getComponent(a), getComponent(b))
+      case q"$a < $b"  => Lt(getComponent(a), getComponent(b))
+      case q"$a <= $b" => Lte(getComponent(a), getComponent(b))
+
+      case q"$a & $b" => BitAnd(getComponent(a), getComponent(b))
+      case q"$a | $b" => BitOr(getComponent(a), getComponent(b))
+      case q"$a ^ $b" => ExclusiveOr(getComponent(a), getComponent(b))
+
+      case q"$a && $b" => LogicalAnd(getComponent(a), getComponent(b))
+      case q"$a || $b" => LogicalOr(getComponent(a), getComponent(b))
+
       case Select(Ident(TermName(_)), TermName(x))                        => Variable(x)
       case ref @ Select(_, TermName(a))                                   => Value(c.eval(c.Expr[T](c.untypecheck(ref.duplicate))))
       case Apply(TypeApply(Select(Select(_, TermName("List")), _), _), l) => Value(l.map(getComponent))
       case Literal(Constant(a))                                           => Value(a)
-      case q"$a + $b"                                                     => Add(getComponent(a), getComponent(b))
-      case q"$a - $b"                                                     => Subtract(getComponent(a), getComponent(b))
-      case q"$a * $b"                                                     => Multiply(getComponent(a), getComponent(b))
-      case q"$a / $b"                                                     => Divide(getComponent(a), getComponent(b))
-      case q"$a % $b"                                                     => Modulo(getComponent(a), getComponent(b))
-      case q"$a == $b"                                                    => Eq(getComponent(a), getComponent(b))
-      case q"$a != $b"                                                    => Neq(getComponent(a), getComponent(b))
-      case q"$a > $b"                                                     => Gt(getComponent(a), getComponent(b))
-      case q"$a >= $b"                                                    => Gte(getComponent(a), getComponent(b))
-      case q"$a < $b"                                                     => Lt(getComponent(a), getComponent(b))
-      case q"$a <= $b"                                                    => Lte(getComponent(a), getComponent(b))
-      case q"$a & $b"                                                     => BitAnd(getComponent(a), getComponent(b))
-      case q"$a | $b"                                                     => BitOr(getComponent(a), getComponent(b))
-      case q"$a ^ $b"                                                     => ExclusiveOr(getComponent(a), getComponent(b))
-      case q"$a && $b"                                                    => LogicalAnd(getComponent(a), getComponent(b))
-      case q"$a || $b"                                                    => LogicalOr(getComponent(a), getComponent(b))
+
       case Apply(Select(Apply(Select(Apply(_, List(e)), TermName("between")), List(l)), TermName("and")), List(r)) =>
         Between(getComponent(e), getComponent(l), getComponent(r))
       case Apply(Select(Apply(_, List(a)), (TermName("like"))), List(b)) => Like(getComponent(a), getComponent(b))
