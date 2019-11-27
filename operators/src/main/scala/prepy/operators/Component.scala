@@ -61,6 +61,21 @@ case class Like(operand1: Component, operand2: Component) extends Component {
     s"${operand1.stringify} LIKE ${operand2.stringify}"
 }
 
+case class LeftLike(operand1: Component, operand2: Component) extends Component {
+  override def stringify(implicit c: blackbox.Context): String =
+    s"${operand1.stringify} LIKE ${operand2.stringify.prepended('%')}"
+}
+
+case class RightLike(operand1: Component, operand2: Component) extends Component {
+  override def stringify(implicit c: blackbox.Context): String =
+    s"${operand1.stringify} LIKE ${operand2.stringify.appended('%')}"
+}
+
+case class FullLike(operand1: Component, operand2: Component) extends Component {
+  override def stringify(implicit c: blackbox.Context): String =
+    s"${operand1.stringify} LIKE ${operand2.stringify.mkString("%", "", "%")}"
+}
+
 case class Between(operand1: Component, operand2: Component, operand3: Component) extends Component {
   override def stringify(implicit c: blackbox.Context): String =
     s"${operand1.stringify} BETWEEN ${operand2.stringify} AND ${operand3.stringify}"

@@ -9,8 +9,8 @@ import scala.reflect.macros.blackbox
 package object operators {
 
   private def getComponent[T](
-                               tree:       Trees#Tree
-                             )(implicit c: blackbox.Context): Component = {
+    tree:       Trees#Tree
+  )(implicit c: blackbox.Context): Component = {
     import c.universe._
     tree match {
       case Select(_, TermName(x)) => Variable(x)
@@ -31,8 +31,14 @@ package object operators {
       case q"$a ^ $b"             => ExclusiveOr(getComponent(a), getComponent(b))
       case q"$a && $b"            => LogicalAnd(getComponent(a), getComponent(b))
       case q"$a || $b"            => LogicalOr(getComponent(a), getComponent(b))
+//      case q"$a between $b and $c" => Between(getComponent(a), getComponent(b), getComponent(c))
+//      case q"$a like $b"           => Like(getComponent(a), getComponent(b))
+//      case q"$a like %$b"          => LeftLike(getComponent(a), getComponent(b))
+//      case q"$a like $b%"          => RightLike(getComponent(a), getComponent(b))
+//      case q"$a like %$b%"         => FullLike(getComponent(a), getComponent(b))
+//      case q"$a in $b"                     => In(getComponent(a), getComponents(b))
+      case Apply(Select(a, (TermName("in"))), b) => In(getComponent(a), b.map(getComponent))
     }
-
   }
 
   def stringify[T <: Product](f: T => Boolean): String = macro impl[T]
