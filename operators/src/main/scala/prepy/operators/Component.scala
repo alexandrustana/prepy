@@ -8,6 +8,9 @@ trait Component {
 case class Value(value: Any) extends Component {
   override def stringify(implicit c: blackbox.Context): String = value match {
     case _: String | _: Char => s"""'$value'"""
+    case e: List[Value] => e.map(_.value).mkString(",")
+    case e: List[_]     => e.mkString(",")
+    case e: Value       => e.value.toString
     case _ => value.toString
   }
 }
@@ -61,28 +64,13 @@ case class Like(operand1: Component, operand2: Component) extends Component {
     s"${operand1.stringify} LIKE ${operand2.stringify}"
 }
 
-case class LeftLike(operand1: Component, operand2: Component) extends Component {
-  override def stringify(implicit c: blackbox.Context): String =
-    s"${operand1.stringify} LIKE ${operand2.stringify.prepended('%')}"
-}
-
-case class RightLike(operand1: Component, operand2: Component) extends Component {
-  override def stringify(implicit c: blackbox.Context): String =
-    s"${operand1.stringify} LIKE ${operand2.stringify.appended('%')}"
-}
-
-case class FullLike(operand1: Component, operand2: Component) extends Component {
-  override def stringify(implicit c: blackbox.Context): String =
-    s"${operand1.stringify} LIKE ${operand2.stringify.mkString("%", "", "%")}"
-}
-
 case class Between(operand1: Component, operand2: Component, operand3: Component) extends Component {
   override def stringify(implicit c: blackbox.Context): String =
     s"${operand1.stringify} BETWEEN ${operand2.stringify} AND ${operand3.stringify}"
 }
-case class In(operand1: Component, operand2: List[Component]) extends Component {
+case class In(operand1: Component, operand2: Component) extends Component {
   override def stringify(implicit c: blackbox.Context): String =
-    s"${operand1.stringify} IN (${operand2.map(_.stringify).mkString(",")})"
+    s"${operand1.stringify} IN (${operand2.stringify})"
 }
 
 case class Not(operand1: Component) extends Component {
