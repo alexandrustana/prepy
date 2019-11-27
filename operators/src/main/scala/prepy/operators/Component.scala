@@ -8,7 +8,7 @@ trait Component {
 case class Value(value: Any) extends Component {
   override def stringify(implicit c: blackbox.Context): String = value match {
     case _: String | _: Char => s"""'$value'"""
-    case e: List[Value] => e.map(_.value).mkString(",")
+    case e: List[Value] => e.map(_.stringify).mkString(",")
     case e: List[_]     => e.mkString(",")
     case e: Value       => e.value.toString
     case _ => value.toString
