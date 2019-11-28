@@ -1,25 +1,32 @@
 package prepy.operators
 
-import scala.reflect.macros.blackbox
+import prepy.formatter.Formatter
+import prepy.formatter.identity.IdentityFormatter
 
 trait Operator {
-  def stringify(implicit c: blackbox.Context): String
+  def stringify(implicit formatter: Formatter = IdentityFormatter): String
 }
 case class Value(value: Any) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String = value match {
-    case _: String | _: Char => s"""'$value'"""
-    case e: List[Value] => e.map(_.stringify).mkString(",")
-    case e: List[_]     => e.mkString(",")
-    case e: Value       => e.value.toString
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String = value match {
+    case _: String | _: Char => s"""'${value.toString}'"""
+    case e: List[_] => e.map(_.toString).mkString(",")
+    case _ => value.toString
+  }
+
+  override def toString: String = value match {
+    case _: Boolean => value.toString.toUpperCase
+    case _: Char | _: String => s"""'${value.toString}'"""
     case _ => value.toString
   }
 }
 case class Variable(name: String) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String = s"$name"
+  override def stringify(implicit formatter: Formatter = IdentityFormatter) = s"${formatter(name)}"
+
+  override def toString: String = name
 }
 
 abstract class Expression(operand1: Operator, operand2: Operator, op: String) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String = {
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String = {
     s"${operand1.stringify} $op ${operand2.stringify}"
   }
 }
@@ -52,7 +59,7 @@ case class Gte(operand1: Operator, operand2: Operator) extends ComparisonOperato
 case class Lte(operand1: Operator, operand2: Operator) extends ComparisonOperator(operand1, operand2, "<=")
 
 abstract class LogicalOperator(operand1: Operator, operand2: Operator, op: String) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String =
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
     s"(${operand1.stringify} $op ${operand2.stringify})"
 }
 
@@ -60,19 +67,19 @@ case class LogicalAnd(operand1: Operator, operand2: Operator) extends LogicalOpe
 case class LogicalOr(operand1:  Operator, operand2: Operator) extends LogicalOperator(operand1, operand2, "OR")
 
 case class Like(operand1: Operator, operand2: Operator) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String =
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
     s"${operand1.stringify} LIKE ${operand2.stringify}"
 }
 
 case class Between(operand1: Operator, operand2: Operator, operand3: Operator) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String =
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
     s"${operand1.stringify} BETWEEN ${operand2.stringify} AND ${operand3.stringify}"
 }
 case class In(operand1: Operator, operand2: Operator) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String =
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
     s"${operand1.stringify} IN (${operand2.stringify})"
 }
 
 case class Not(operand1: Operator) extends Operator {
-  override def stringify(implicit c: blackbox.Context): String = s"!${operand1.stringify}"
+  override def stringify(implicit formatter: Formatter = IdentityFormatter): String = s"!${operand1.stringify}"
 }

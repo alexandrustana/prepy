@@ -52,6 +52,6 @@ package object operators {
 
     val expression = getExpression[T](funcBody)(c)
 
-    c.Expr[String](q"${expression.stringify(c)}")
+    c.Expr[String](q"${expression.stringify}")
   }
 }

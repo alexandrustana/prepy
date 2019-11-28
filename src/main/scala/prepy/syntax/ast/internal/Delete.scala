@@ -1,6 +1,7 @@
 package prepy.syntax.ast.internal
 
-import prepy.formatter.{Formatter, IdentityFormatter}
+import prepy.formatter.Formatter
+import prepy.formatter.identity.IdentityFormatter
 import shapeless.Typeable
 
 private[syntax] trait Delete {

@@ -1,7 +1,8 @@
 package prepy.syntax.ast.internal
 
 import cats.data.Validated.Invalid
-import prepy.formatter.{Formatter, IdentityFormatter}
+import prepy.formatter.Formatter
+import prepy.formatter.identity.IdentityFormatter
 import prepy.implicits.Implicits.{Serialize, Transform}
 import shapeless.Typeable
 
