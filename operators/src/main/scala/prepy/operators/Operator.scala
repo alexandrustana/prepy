@@ -8,12 +8,13 @@ trait Operator {
 }
 case class Value(value: Any) extends Operator {
   override def stringify(implicit formatter: Formatter = IdentityFormatter): String = value match {
-    case _: String | _: Char => s"""'${value.toString}'"""
-    case e: List[_] => e.map(_.toString).mkString(",")
-    case _ => value.toString
+    case e: List[_] => e.map(toSql).mkString(",")
+    case _ => toSql(value)
   }
 
-  override def toString: String = value match {
+  override def toString: String = toSql(value)
+
+  def toSql(value: Any): String = value match {
     case _: Boolean => value.toString.toUpperCase
     case _: Char | _: String => s"""'${value.toString}'"""
     case _ => value.toString

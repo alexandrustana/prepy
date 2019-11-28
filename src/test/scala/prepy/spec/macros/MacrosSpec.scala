@@ -10,7 +10,7 @@ class MacrosSpec extends Specification with TestDomain with Syntax {
       stringify[ATable](f => f.iField == 1) mustEqual "iField = 1"
     }
     "match the equal check for a boolean field" in {
-      stringify[ATable](f => f.jField == true) mustEqual "jField = true"
+      stringify[ATable](f => f.jField == true) mustEqual "jField = TRUE"
     }
     "match the equal check for a char field" in {
       stringify[ATable](f => f.lField == 'c') mustEqual "lField = 'c'"
@@ -23,7 +23,7 @@ class MacrosSpec extends Specification with TestDomain with Syntax {
       stringify[ATable](f => f.iField != 1) mustEqual "iField <> 1"
     }
     "match the not equal check for a boolean field" in {
-      stringify[ATable](f => f.jField != true) mustEqual "jField <> true"
+      stringify[ATable](f => f.jField != true) mustEqual "jField <> TRUE"
     }
     "match the not equal check for a char field" in {
       stringify[ATable](f => f.lField != 'c') mustEqual "lField <> 'c'"
