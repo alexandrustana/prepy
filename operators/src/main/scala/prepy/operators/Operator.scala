@@ -20,6 +20,11 @@ case class Value(value: Any) extends Operator {
     case _ => value.toString
   }
 }
+
+case class Wildcard(variables: Int) extends Operator {
+  override def stringify(implicit formatter: Formatter): String = (0 to variables).map(_ => "?").mkString(",")
+}
+
 case class Variable(name: String) extends Operator {
   override def stringify(implicit formatter: Formatter = IdentityFormatter) = s"${formatter(name)}"
 
@@ -61,7 +66,7 @@ case class Lte(operand1: Operator, operand2: Operator) extends ComparisonOperato
 
 abstract class LogicalOperator(operand1: Operator, operand2: Operator, op: String) extends Operator {
   override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
-    s"(${operand1.stringify} $op ${operand2.stringify})"
+    s"${operand1.stringify} $op ${operand2.stringify}"
 }
 
 case class LogicalAnd(operand1: Operator, operand2: Operator) extends LogicalOperator(operand1, operand2, "AND")

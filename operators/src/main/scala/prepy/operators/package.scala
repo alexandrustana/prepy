@@ -1,5 +1,6 @@
 package prepy
 
+import scala.annotation.tailrec
 import scala.language.experimental.macros
 import scala.reflect.api.Trees
 import scala.reflect.macros.blackbox
@@ -31,15 +32,25 @@ package object operators {
       case q"$a && $b" => LogicalAnd(getExpression(a), getExpression(b))
       case q"$a || $b" => LogicalOr(getExpression(a), getExpression(b))
 
-      case Select(Ident(TermName(_)), TermName(x))                        => Variable(x)
-      case ref @ Select(_, TermName(a))                                   => Value(c.eval(c.Expr[T](c.untypecheck(ref.duplicate))))
-      case Apply(TypeApply(Select(Select(_, TermName("List")), _), _), l) => Value(l.map(getExpression))
-      case Literal(Constant(a))                                           => Value(a)
-
       case Apply(Select(Apply(Select(Apply(_, List(e)), TermName("between")), List(l)), TermName("and")), List(r)) =>
         Between(getExpression(e), getExpression(l), getExpression(r))
       case Apply(Select(Apply(_, List(a)), (TermName("like"))), List(b)) => Like(getExpression(a), getExpression(b))
       case Apply(Select(Apply(_, List(a)), (TermName("in"))), List(b))   => In(getExpression(a), getExpression(b))
+
+      case Select(Ident(TermName(_)), TermName(x))                        => Variable(x)
+      case Apply(TypeApply(Select(Select(_, TermName("List")), _), _), l) => Value(l.map(getExpression))
+      case Literal(Constant(v))                                           => Value(v)
+      case ref                                                            => Wildcard(getLength(ref))
+    }
+  }
+
+  @tailrec
+  private def getLength(tree: Trees#Tree, acc: Int = 0)(implicit c: blackbox.Context): Int = {
+    import c.universe._
+    tree match {
+      case Select(Ident(TermName(_)), _) => if (acc > 1) acc / 2 else acc
+      case Select(inner, _)              => getLength(inner, acc + 1)
+      case _                             => if (acc > 1) acc / 2 else acc
     }
   }
 

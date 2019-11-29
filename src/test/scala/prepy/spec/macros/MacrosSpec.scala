@@ -74,10 +74,10 @@ class MacrosSpec extends Specification with TestDomain with Syntax {
 
     "match logical operators" should {
       "be equal for an boolean field and operation" in {
-        stringify[ATable](f => f.jField && true) mustEqual "(jField AND TRUE)"
+        stringify[ATable](f => f.jField && true) mustEqual "jField AND TRUE"
       }
       "be equal for an boolean field or operation" in {
-        stringify[ATable](f => f.jField || false) mustEqual "(jField OR FALSE)"
+        stringify[ATable](f => f.jField || false) mustEqual "jField OR FALSE"
       }
     }
 
@@ -110,12 +110,29 @@ class MacrosSpec extends Specification with TestDomain with Syntax {
 
     "match between" should {
       "be equal for an int field" in {
-        stringify[ATable](f => f.iField between 1 and 2) mustEqual "iField BETWEEN 1 AND 2"
+        stringify[ATable](f => f.iField.between(1).and(2)) mustEqual "iField BETWEEN 1 AND 2"
       }
       "be equal for an char field" in {
-        stringify[ATable](f => f.lField between 'c' and 'd') mustEqual "lField BETWEEN 'c' AND 'd'"
+        stringify[ATable](f => f.lField.between('c').and('d')) mustEqual "lField BETWEEN 'c' AND 'd'"
       }
     }
 
+  }
+
+  "chained operators in expression" should {
+    "match and operators" should {
+      "be equal for an int field" in {
+        stringify[ATable](f => f.iField == 1 && f.iField != 2) mustEqual "iField = 1 AND iField <> 2"
+      }
+      "be equal for a boolean field" in {
+        stringify[ATable](f => f.jField && true) mustEqual "jField AND TRUE"
+      }
+      "be equal for a char field" in {
+        stringify[ATable](f => f.lField == 'c' && f.iField == 1 && f.jField) mustEqual "lField = 'c' AND iField = 1 AND jField"
+      }
+      "be equal for a string field" in {
+        stringify[ATable](f => f.kField == "abc" && f.mField == 1.2) mustEqual "kField = 'abc' AND mField = 1.2"
+      }
+    }
   }
 }
