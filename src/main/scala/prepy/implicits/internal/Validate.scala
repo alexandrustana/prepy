@@ -2,7 +2,6 @@ package prepy.implicits.internal
 
 import prepy.implicits.Implicits
 import shapeless.ops.hlist._
-import shapeless.ops.record._
 import shapeless.{Generic, HList, HNil, LabelledGeneric}
 
 trait Validate extends FlattenPoly {

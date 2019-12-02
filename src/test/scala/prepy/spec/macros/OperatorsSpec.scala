@@ -4,7 +4,7 @@ import org.specs2.mutable._
 import prepy.TestDomain
 import prepy.operators._
 
-class MacrosSpec extends Specification with TestDomain with Syntax {
+class OperatorsSpec extends Specification with TestDomain with Syntax {
   "single operators in expression" should {
     "match ==" should {
       "be equal for an int field" in {
