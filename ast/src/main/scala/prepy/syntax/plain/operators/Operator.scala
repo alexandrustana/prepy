@@ -1,4 +1,4 @@
-package prepy.operators
+package prepy.syntax.plain.operators
 
 import prepy.formatter.Formatter
 import prepy.formatter.identity.IdentityFormatter
@@ -6,6 +6,7 @@ import prepy.formatter.identity.IdentityFormatter
 trait Operator {
   def stringify(implicit formatter: Formatter = IdentityFormatter): String
 }
+
 case class Value(value: Any) extends Operator {
   override def stringify(implicit formatter: Formatter = IdentityFormatter): String = value match {
     case e: List[_] => e.map(toSql).mkString(",")
@@ -88,4 +89,23 @@ case class In(operand1: Operator, operand2: Operator) extends Operator {
 
 case class Not(operand1: Operator) extends Operator {
   override def stringify(implicit formatter: Formatter = IdentityFormatter): String = s"!${operand1.stringify}"
+}
+
+trait Operations {
+
+  implicit class inSyntax[T](operator1: T) {
+    def in(operator2: List[T]): Boolean = operator2.contains(operator1)
+  }
+
+  implicit class likeSyntax(operator1: String) {
+    def like(operator2: String): Boolean = operator2.contains(operator1)
+  }
+
+  implicit class betweenSyntax[T](operator1: T) {
+    def between(operator2: T): andSyntax = andSyntax(operator2)
+
+    case class andSyntax(operator2: T) {
+      def and(operator3: T): Boolean = operator1 == operator2 && operator1 == operator3
+    }
+  }
 }

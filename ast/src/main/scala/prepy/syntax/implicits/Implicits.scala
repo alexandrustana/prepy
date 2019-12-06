@@ -1,10 +1,10 @@
-package prepy.implicits
+package prepy.syntax.implicits
 
-import prepy.implicits.internal.{Serialize, Validate}
+import prepy.syntax.implicits.internal.{Serialize, Validate}
 
 import scala.annotation.implicitNotFound
 
-private[prepy] trait Implicits extends Serialize with Validate {}
+trait Implicits extends Serialize with Validate {}
 
 object Implicits {
 

@@ -1,6 +1,6 @@
-package prepy.implicits.internal
+package prepy.syntax.implicits.internal
 
-import prepy.implicits.Implicits
+import prepy.syntax.implicits.Implicits
 import shapeless.ops.hlist._
 import shapeless.{Generic, HList, HNil, LabelledGeneric}
 

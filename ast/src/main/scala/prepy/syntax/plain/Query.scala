@@ -1,4 +1,4 @@
-package prepy.syntax.ast.internal
+package prepy.syntax.plain
 
 import cats.data.Validated
 import cats.data.Validated.Valid

@@ -1,10 +1,10 @@
-package prepy.syntax.ast.internal
+package prepy.syntax.plain
 
 import cats.data.Validated.Invalid
 import prepy.formatter.Formatter
 import prepy.formatter.identity.IdentityFormatter
+import prepy.syntax.implicits.Implicits._
 import shapeless.Typeable
-import prepy.implicits.Implicits.{Serialize, Transform}
 
 private[prepy] trait Insert {
 

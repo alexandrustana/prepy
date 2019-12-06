@@ -18,14 +18,14 @@ lazy val root = (project in file("."))
   .settings(Compiler.commonSettings)
   .settings(
     name := "prepy",
-    libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.doobie)
+    libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless)
   )
-  .dependsOn(operators, formatters)
+  .dependsOn(ast, formatters)
 
-lazy val operators = (project in file("operators"))
+lazy val ast = (project in file("ast"))
   .settings(Compiler.commonSettings)
   .settings(
-    libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.spire, libs.macros)
+    libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.macros, libs.doobie)
   )
   .dependsOn(formatters)
 

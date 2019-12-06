@@ -1,4 +1,4 @@
-package prepy
+package prepy.syntax.plain
 
 import scala.annotation.tailrec
 import scala.language.experimental.macros
@@ -7,7 +7,7 @@ import scala.reflect.macros.blackbox
 
 package object operators {
 
-  private def getExpression[T](
+  def getExpression[T](
     tree:       Trees#Tree
   )(implicit c: blackbox.Context): Operator = {
     import c.universe._
@@ -54,15 +54,4 @@ package object operators {
     }
   }
 
-  def stringify[T <: Product](f: T => Boolean): String = macro impl[T]
-
-  def impl[T: c.WeakTypeTag](c: blackbox.Context)(f: c.Expr[T => Boolean]): c.Expr[String] = {
-    import c.universe._
-
-    val Function(List(ValDef(_, _, _, _)), funcBody) = f.tree
-
-    val expression = getExpression[T](funcBody)(c)
-
-    c.Expr[String](q"${expression.stringify}")
-  }
 }

@@ -2,7 +2,7 @@ package prepy.spec.syntax
 
 import prepy.syntax._
 import prepy.TestDomain
-import prepy.syntax.{Serialize, Transform}
+import prepy.syntax.implicits.Implicits._
 import shapeless.cachedImplicit
 
 trait TestImplicits extends TestDomain {

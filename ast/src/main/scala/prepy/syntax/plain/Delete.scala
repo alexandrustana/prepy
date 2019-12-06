@@ -1,4 +1,4 @@
-package prepy.syntax.ast.internal
+package prepy.syntax.plain
 
 import prepy.formatter.Formatter
 import prepy.formatter.identity.IdentityFormatter
@@ -13,11 +13,14 @@ private[syntax] trait Delete {
     Delete.`deleteT`[T](typeable.describe, formatter)
 }
 
-object Delete extends Where {
+object Delete {
   private[syntax] case class `deleteT`[T <: Product](tableName: String, formatter: Formatter) extends Query {
+    import scala.language.experimental.macros
+    import Where._
+
     type Out = T
 
-    def where(condition: String): `whereT`[T] = `whereT`[T](this, condition)
+    def where(predicate: T => Boolean): `whereT`[T] = macro impl[T]
 
     override def toString: String = s"DELETE FROM ${formatter(tableName)}"
   }

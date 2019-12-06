@@ -1,9 +1,9 @@
-package prepy.syntax.ast.internal
+package prepy.syntax.plain
 
 import cats.data.Validated.Invalid
 import prepy.formatter.Formatter
 import prepy.formatter.identity.IdentityFormatter
-import prepy.implicits.Implicits.{Serialize, Transform}
+import prepy.syntax.implicits.Implicits._
 import shapeless.Typeable
 
 private[syntax] trait Update {
@@ -16,7 +16,7 @@ private[syntax] trait Update {
 
 }
 
-object Update extends Where {
+object Update {
 
   private[syntax] case class `updateT`[T <: Product](tableName: String, formatter: Formatter) extends Query {
     override def apply() =
@@ -30,9 +30,12 @@ object Update extends Where {
 
   private[syntax] case class `setT`[T <: Product](queryElement: Query, fields: List[Symbol], formatter: Formatter)
       extends Query {
+    import scala.language.experimental.macros
+    import Where._
+
     type Out = T
 
-    def where(condition: String): `whereT`[T] = `whereT`[T](this, condition)
+    def where(predicate: T => Boolean): `whereT`[T] = macro impl[T]
 
     override def toString: String =
       s"$queryElement SET ${fields.map(field => s"${formatter(field.name)} = ?").mkString(", ")}"

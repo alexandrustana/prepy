@@ -2,7 +2,8 @@ package prepy.spec.macros
 
 import org.specs2.mutable._
 import prepy.TestDomain
-import prepy.operators._
+import prepy.syntax.Syntax
+import prepy.syntax.plain.Where._
 
 class OperatorsSpec extends Specification with TestDomain with Syntax {
   "single operators in expression" should {

@@ -3,7 +3,7 @@ package prepy.spec.syntax
 import cats.data.Validated.{Invalid, Valid}
 import org.specs2.mutable._
 import prepy.TestDomain
-import prepy.syntax._
+import prepy._
 
 class SyntaxSpec extends Specification with TestDomain with TestImplicits {
 
@@ -20,7 +20,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
         "with single condition" in {
           select[ATable]
             .from[ATable]
-            .where("iField == 1")
+            .where(f => f.iField == 1)
             .apply() mustEqual Valid(
             "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1)"
           )
@@ -30,8 +30,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "single AND condition" in {
             select[ATable]
               .from[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
+              .where(f => f.iField == 1 && f.jField == true)
               .apply() mustEqual Valid(
               "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE)"
             )
@@ -39,9 +38,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "multiple AND conditions" in {
             select[ATable]
               .from[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
-              .and("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 && f.jField == true && f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
             )
@@ -49,8 +46,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "single OR condition" in {
             select[ATable]
               .from[ATable]
-              .where("iField == 1")
-              .or("jField == TRUE")
+              .where(f => f.iField == 1 || f.jField == true)
               .apply() mustEqual Valid(
               "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE)"
             )
@@ -58,9 +54,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "multiple OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where("iField == 1")
-              .or("jField == TRUE")
-              .or("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 || f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
             )
@@ -68,9 +62,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "mixed AND with OR conditions" in {
             select[ATable]
               .from[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
-              .or("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 && f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
             )
@@ -114,46 +106,38 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
         }
         "with single condition" in {
           delete[ATable]
-            .where("iField == 1")
+            .where(f => f.iField == 1)
             .apply() mustEqual Valid("DELETE FROM ATable WHERE (iField == 1)")
         }
 
         "with multiple conditions" in {
           "single AND condition" in {
             delete[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
+              .where(f => f.iField == 1 && f.jField == true)
               .apply() mustEqual Valid("DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE)")
           }
           "multiple AND conditions" in {
             delete[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
-              .and("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 && f.jField == true && f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             delete[ATable]
-              .where("iField == 1")
-              .or("jField == TRUE")
+              .where(f => f.iField == 1 || f.jField == true)
               .apply() mustEqual Valid("DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE)")
           }
           "multiple OR conditions" in {
             delete[ATable]
-              .where("iField == 1")
-              .or("jField == TRUE")
-              .or("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 || f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "DELETE FROM ATable WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             delete[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
-              .or("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 && f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "DELETE FROM ATable WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
             )
@@ -201,7 +185,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
         "with single condition" in {
           update[ATable]
             .set[ATable]
-            .where("iField == 1")
+            .where(f => f.iField == 1)
             .apply() mustEqual Valid(
             "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1)"
           )
@@ -211,8 +195,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "single AND condition" in {
             update[ATable]
               .set[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
+              .where(f => f.iField == 1 && f.jField == true)
               .apply() mustEqual Valid(
               "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE)"
             )
@@ -220,9 +203,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "multiple AND conditions" in {
             update[ATable]
               .set[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
-              .and("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 && f.jField == true && f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE) AND (kField LIKE '%foo%')"
             )
@@ -230,8 +211,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "single OR condition" in {
             update[ATable]
               .set[ATable]
-              .where("iField == 1")
-              .or("jField == TRUE")
+              .where(f => f.iField == 1 || f.jField == true)
               .apply() mustEqual Valid(
               "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) OR (jField == TRUE)"
             )
@@ -239,9 +219,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "multiple OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("iField == 1")
-              .or("jField == TRUE")
-              .or("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 || f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) OR (jField == TRUE) OR (kField LIKE '%foo%')"
             )
@@ -249,9 +227,7 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
           "mixed AND with OR conditions" in {
             update[ATable]
               .set[ATable]
-              .where("iField == 1")
-              .and("jField == TRUE")
-              .or("kField LIKE '%foo%'")
+              .where(f => f.iField == 1 && f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
               "UPDATE ATable SET iField = ?, jField = ?, kField = ?, lField = ?, mField = ?, nField = ?, oField = ?, pField = ? WHERE (iField == 1) AND (jField == TRUE) OR (kField LIKE '%foo%')"
             )

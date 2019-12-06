@@ -10,8 +10,8 @@ object Publish {
     publishArtifact in Test    := false,
     publishMavenStyle          := true,
     pomIncludeRepository       := (_ => false),
-    publishTo := sonatypePublishToBundle.value,
-    licenses  := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+    publishTo                  := sonatypePublishToBundle.value,
+    licenses                   := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     scmInfo := Option(
       ScmInfo(
         url("https://github.com/alexandrustana/prepy"),

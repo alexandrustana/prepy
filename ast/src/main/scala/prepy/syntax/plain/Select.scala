@@ -1,9 +1,9 @@
-package prepy.syntax.ast.internal
+package prepy.syntax.plain
 
 import cats.data.Validated.Invalid
 import prepy.formatter.Formatter
 import prepy.formatter.identity.IdentityFormatter
-import prepy.implicits.Implicits._
+import prepy.syntax.implicits.Implicits._
 import shapeless.Typeable
 
 private[syntax] trait Select {
@@ -13,7 +13,7 @@ private[syntax] trait Select {
 
 }
 
-object Select extends Where {
+object Select {
   private[syntax] case class `selectT`[T <: Product](fields: List[Symbol], formatter: Formatter) extends Query {
     override def apply() =
       Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[K]`")
@@ -29,11 +29,13 @@ object Select extends Where {
     tableName:    String,
     formatter:    Formatter
   ) extends Query {
+    import scala.language.experimental.macros
+    import Where._
+
     type Out = T
 
-    def where(condition: String): `whereT`[T] = `whereT`[T](this, condition)
+    def where(predicate: T => Boolean): `whereT`[T] = macro impl[T]
 
     override def toString: String = s"$queryElement FROM ${formatter(tableName)}"
   }
-
 }

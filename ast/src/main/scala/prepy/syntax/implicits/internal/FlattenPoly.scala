@@ -1,4 +1,4 @@
-package prepy.implicits.internal
+package prepy.syntax.implicits.internal
 
 import shapeless._
 import shapeless.labelled.FieldType
