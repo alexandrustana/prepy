@@ -23,7 +23,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
             .from[ATable]
             .where(f => f.iField == 1)
             .apply() mustEqual Valid(
-            "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1)"
+            "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field = 1)"
           )
         }
 
@@ -33,7 +33,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .from[ATable]
               .where(f => f.iField == 1 && f.jField == true)
               .apply() mustEqual Valid(
-              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) AND (j_field == TRUE)"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field = 1 AND j_field = TRUE)"
             )
           }
           "multiple AND conditions" in {
@@ -41,7 +41,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .from[ATable]
               .where(f => f.iField == 1 && f.jField == true && f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) AND (k_field LIKE '%foo%')"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field = 1 AND j_field = TRUE AND k_field LIKE '%foo%')"
             )
           }
           "single OR condition" in {
@@ -49,7 +49,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .from[ATable]
               .where(f => f.iField == 1 || f.jField == true)
               .apply() mustEqual Valid(
-              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) OR (j_field == TRUE)"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field = 1 OR j_field = TRUE)"
             )
           }
           "multiple OR conditions" in {
@@ -57,7 +57,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .from[ATable]
               .where(f => f.iField == 1 || f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) OR (j_field == TRUE) OR (k_field LIKE '%foo%')"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field = 1 OR j_field = TRUE OR k_field LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
@@ -65,7 +65,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .from[ATable]
               .where(f => f.iField == 1 && f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) OR (k_field LIKE '%foo%')"
+              "SELECT i_field, j_field, k_field, l_field, m_field, n_field, o_field, p_field FROM a_table WHERE (i_field = 1 AND j_field = TRUE OR k_field LIKE '%foo%')"
             )
           }
         }
@@ -115,32 +115,32 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
           "single AND condition" in {
             delete[ATable]
               .where(f => f.iField == 1 && f.jField == true)
-              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field == 1) AND (j_field == TRUE)")
+              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field = 1 AND j_field = TRUE)")
           }
           "multiple AND conditions" in {
             delete[ATable]
               .where(f => f.iField == 1 && f.jField == true && f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "DELETE FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) AND (k_field LIKE '%foo%')"
+              "DELETE FROM a_table WHERE (i_field = 1 AND j_field = TRUE AND k_field LIKE '%foo%')"
             )
           }
           "single OR condition" in {
             delete[ATable]
               .where(f => f.iField == 1 || f.jField == true)
-              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field == 1) OR (j_field == TRUE)")
+              .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field = 1 OR j_field = TRUE)")
           }
           "multiple OR conditions" in {
             delete[ATable]
               .where(f => f.iField == 1 || f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "DELETE FROM a_table WHERE (i_field == 1) OR (j_field == TRUE) OR (k_field LIKE '%foo%')"
+              "DELETE FROM a_table WHERE (i_field = 1 OR j_field = TRUE OR k_field LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
             delete[ATable]
               .where(f => f.iField == 1 && f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "DELETE FROM a_table WHERE (i_field == 1) AND (j_field == TRUE) OR (k_field LIKE '%foo%')"
+              "DELETE FROM a_table WHERE (i_field = 1 AND j_field = TRUE OR k_field LIKE '%foo%')"
             )
           }
         }
@@ -188,7 +188,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
             .set[ATable]
             .where(f => f.iField == 1)
             .apply() mustEqual Valid(
-            "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1)"
+            "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field = 1)"
           )
         }
 
@@ -198,7 +198,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .set[ATable]
               .where(f => f.iField == 1 && f.jField == true)
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) AND (j_field == TRUE)"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field = 1 AND j_field = TRUE)"
             )
           }
           "multiple AND conditions" in {
@@ -206,7 +206,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .set[ATable]
               .where(f => f.iField == 1 && f.jField == true && f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) AND (j_field == TRUE) AND (k_field LIKE '%foo%')"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field = 1 AND j_field = TRUE AND k_field LIKE '%foo%')"
             )
           }
           "single OR condition" in {
@@ -214,7 +214,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .set[ATable]
               .where(f => f.iField == 1 || f.jField == true)
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) OR (j_field == TRUE)"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field = 1 OR j_field = TRUE)"
             )
           }
           "multiple OR conditions" in {
@@ -222,7 +222,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .set[ATable]
               .where(f => f.iField == 1 || f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) OR (j_field == TRUE) OR (k_field LIKE '%foo%')"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field = 1 OR j_field = TRUE OR k_field LIKE '%foo%')"
             )
           }
           "mixed AND with OR conditions" in {
@@ -230,7 +230,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
               .set[ATable]
               .where(f => f.iField == 1 && f.jField == true || f.kField.like("%foo%"))
               .apply() mustEqual Valid(
-              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field == 1) AND (j_field == TRUE) OR (k_field LIKE '%foo%')"
+              "UPDATE a_table SET i_field = ?, j_field = ?, k_field = ?, l_field = ?, m_field = ?, n_field = ?, o_field = ?, p_field = ? WHERE (i_field = 1 AND j_field = TRUE OR k_field LIKE '%foo%')"
             )
           }
         }
