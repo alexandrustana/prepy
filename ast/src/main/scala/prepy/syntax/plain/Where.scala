@@ -5,11 +5,12 @@ object Where {
   import scala.reflect.macros.blackbox
   import scala.language.experimental.macros
 
+  def stringify[T <: Product](predicate: T => Boolean): String = macro stringifyPredicate[T]
+
   def stringifyPredicate[T <: Product: c.WeakTypeTag](
     c:         blackbox.Context
   )(predicate: c.Expr[T => Boolean]): c.Expr[String] = {
     import c.universe._
-    val tpe = weakTypeOf[T]
 
     val serializedPredicate: c.Expr[String] = predicate.tree match {
       case q"(..$p) => $body" => c.Expr[String](q"${getExpression[T](body)(c).stringify}")
@@ -23,7 +24,7 @@ object Where {
   )(predicate: c.Expr[T => Boolean]): c.Expr[`whereT`[T]] = {
     import c.universe._
 
-    reify{
+    reify {
       `whereT`[T](c.prefix.splice.asInstanceOf[Query].toString, stringifyPredicate(c)(predicate).splice)
     }
   }
