@@ -108,7 +108,7 @@ class PostgresqlFormatterSpec extends Specification with TestDomain with TestImp
         "with single condition" in {
           delete[ATable]
             .where(f => f.iField == 1)
-            .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field == 1)")
+            .apply() mustEqual Valid("DELETE FROM a_table WHERE (i_field = 1)")
         }
 
         "with multiple conditions" in {

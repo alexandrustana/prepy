@@ -3,7 +3,7 @@ package prepy.spec.implicits
 import prepy.syntax._
 import org.specs2.mutable._
 import prepy.TestDomain
-import prepy.syntax.implicits.Implicits.Transform
+import prepy.syntax.implicits.Internal.Transform
 import shapeless.test.illTyped
 
 class TransformSpec extends Specification with TestDomain {

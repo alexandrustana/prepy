@@ -4,9 +4,9 @@ import prepy.syntax.implicits.internal.{Serialize, Validate}
 
 import scala.annotation.implicitNotFound
 
-trait Implicits extends Serialize with Validate {}
+trait Internal extends Serialize with Validate {}
 
-object Implicits {
+object Internal {
 
   @implicitNotFound("Cannot build serialize function from ${T}")
   trait Serialize[T <: Product] {

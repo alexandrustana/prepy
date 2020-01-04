@@ -1,4 +1,4 @@
-import prepy.syntax.implicits.Implicits
+import prepy.syntax.implicits.Internal
 import prepy.syntax.plain.AST
 
-package object prepy extends AST with Implicits {}
+package object prepy extends AST with Internal {}

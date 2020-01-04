@@ -1,11 +1,11 @@
 package prepy.syntax.implicits.internal
 
-import prepy.syntax.implicits.Implicits
+import prepy.syntax.implicits.Internal
 import shapeless.ops.hlist._
-import shapeless.{Generic, HList, HNil, LabelledGeneric}
+import shapeless.{HList, HNil, LabelledGeneric}
 
 trait Validate extends FlattenPoly {
-  type Transform[From <: Product, To <: Product] = Implicits.Transform[From, To]
+  type Transform[From <: Product, To <: Product] = Internal.Transform[From, To]
 
   implicit def validateTransformation[
     From <: Product,

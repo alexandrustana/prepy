@@ -1,7 +1,5 @@
 package prepy.formatter
 
-import prepy.formatter.identity.IdentityFormatter
-
-package object formatter {
+package object identity {
   implicit val format: Formatter = IdentityFormatter
 }

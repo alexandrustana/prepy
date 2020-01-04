@@ -1,20 +1,18 @@
 package prepy.syntax.plain
 
-import prepy.formatter.Formatter
-import prepy.formatter.identity.IdentityFormatter
+import prepy.syntax.internal.Codec
 import shapeless.Typeable
 
 private[syntax] trait Delete {
 
   def delete[T <: Product](
-    implicit typeable: Typeable[T],
-    formatter:         Formatter = IdentityFormatter
+    implicit typeable: Typeable[T]
   ): Delete.`deleteT`[T] =
-    Delete.`deleteT`[T](typeable.describe, formatter)
+    Delete.`deleteT`[T](typeable.describe)
 }
 
 object Delete {
-  private[syntax] case class `deleteT`[T <: Product](tableName: String, formatter: Formatter) extends Query {
+  private[syntax] case class `deleteT`[T <: Product](tableName: String) extends Query {
     import scala.language.experimental.macros
     import Where._
 
@@ -22,7 +20,7 @@ object Delete {
 
     def where(predicate: T => Boolean): `whereT`[T] = macro impl[T]
 
-    override def toString: String = s"DELETE FROM ${formatter(tableName)}"
+    override def toString: String = s"DELETE FROM ${Codec.encode(tableName)}"
   }
 
 }

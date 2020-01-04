@@ -1,14 +1,13 @@
 package prepy.syntax.plain.operators
 
-import prepy.formatter.Formatter
-import prepy.formatter.identity.IdentityFormatter
+import prepy.syntax.internal.Codec
 
 trait Operator {
-  def stringify(implicit formatter: Formatter = IdentityFormatter): String
+  def stringify: String
 }
 
 case class Value(value: Any) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String = value match {
+  override def stringify: String = value match {
     case e: List[_] => e.map(toSql).mkString(",")
     case _ => toSql(value)
   }
@@ -23,17 +22,17 @@ case class Value(value: Any) extends Operator {
 }
 
 case class Wildcard(variables: Int) extends Operator {
-  override def stringify(implicit formatter: Formatter): String = (0 to variables).map(_ => "?").mkString(",")
+  override def stringify: String = (0 to variables).map(_ => "?").mkString(",")
 }
 
 case class Variable(name: String) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter) = s"${formatter(name)}"
+  override def stringify = s"${Codec.encode(name)}"
 
   override def toString: String = name
 }
 
 abstract class Expression(operand1: Operator, operand2: Operator, op: String) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String = {
+  override def stringify: String = {
     s"${operand1.stringify} $op ${operand2.stringify}"
   }
 }
@@ -66,7 +65,7 @@ case class Gte(operand1: Operator, operand2: Operator) extends ComparisonOperato
 case class Lte(operand1: Operator, operand2: Operator) extends ComparisonOperator(operand1, operand2, "<=")
 
 abstract class LogicalOperator(operand1: Operator, operand2: Operator, op: String) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
+  override def stringify: String =
     s"${operand1.stringify} $op ${operand2.stringify}"
 }
 
@@ -74,21 +73,21 @@ case class LogicalAnd(operand1: Operator, operand2: Operator) extends LogicalOpe
 case class LogicalOr(operand1:  Operator, operand2: Operator) extends LogicalOperator(operand1, operand2, "OR")
 
 case class Like(operand1: Operator, operand2: Operator) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
+  override def stringify: String =
     s"${operand1.stringify} LIKE ${operand2.stringify}"
 }
 
 case class Between(operand1: Operator, operand2: Operator, operand3: Operator) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
+  override def stringify: String =
     s"${operand1.stringify} BETWEEN ${operand2.stringify} AND ${operand3.stringify}"
 }
 case class In(operand1: Operator, operand2: Operator) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String =
+  override def stringify: String =
     s"${operand1.stringify} IN (${operand2.stringify})"
 }
 
 case class Not(operand1: Operator) extends Operator {
-  override def stringify(implicit formatter: Formatter = IdentityFormatter): String = s"!${operand1.stringify}"
+  override def stringify: String = s"!${operand1.stringify}"
 }
 
 trait Operations {
