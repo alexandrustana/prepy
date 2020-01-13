@@ -10,14 +10,17 @@ Generates string sql queries based on the structure of case classes, this minimi
 
   *Features*:
 
+```scala
+case class A(id: Int)
+```
+
  1. quick transformation to sql. e.g. `select[A].from[A].apply()`
 
- 2. avoid writing faulty queries. e.g. `update[A].set[A].where("id == 1").apply()`
+ 2. avoid writing faulty queries. e.g. `update[A].set[A].where(t => t.id == 1).apply()`
 
-### `prepy.syntax.doobie`
-
-Easy way of generating doobie queries without have to manully write out queries. e.g. `insert[A].values[A].update()`
-
+ 3. support SQL operators. 
+ - `select[A].from[A].where(t => t.id between 1 and 2).apply()`
+ - `select[A].from[A].where(t => t.id in List(1,2)).apply()`
 
 ## Get started
 
@@ -25,7 +28,7 @@ Prepy is available on Scala 2.12, 2.13
 
 ```scala
 
- libraryDependencies += "com.github.alexandrustana" %% "prepy" % "0.0.4"
+ libraryDependencies += "com.github.alexandrustana" %% "prepy" % "0.0.5"
 
 ```
 
@@ -44,13 +47,13 @@ Now use the prepy magic to generate some sql queries
 ```scala
 import prepy.syntax._
 
-select[UserName].from[UserTable].where("id = 1").apply()
+select[UserName].from[UserTable].where(u => u.id == 1).apply()
 // res0: cats.data.Validated[String,String] = Valid(SELECT id, firstName, lastName FROM UserTable WHERE (id == 1))
 
-update[UserTable].set[UserAddress].where("id = 1").or("id = 2").apply()
+update[UserTable].set[UserAddress].where(u => u.id == 1 || u.id == 2).apply()
 // res1: cats.data.Validated[String,String] = Valid(UPDATE UserTable SET id = ?, address = ? WHERE (id == 1) OR (id == 2))
 
-delete[UserTable].where("id = 3").apply()
+delete[UserTable].where(u => u.id == 3).apply()
 // res2: cats.data.Validated[String,String] = Valid(DELETE FROM UserTable WHERE (id = 3))
 ```
 Invalid syntax will generate `Invalid` structures with appropriate messages.
@@ -68,14 +71,6 @@ import prepy.formatter.postgresql._
 
 update[UserTable].set[UserName].apply()
 //res0: cats.data.Validated[String,String] = Valid(UPDATE user_table SET id = ?, first_name = ?, last_name = ?)
-```
-
-Doobie seamless integration 
-```scala
-import prepy.syntax.doobie._
-
-select[UserName].from[UserTable].query()
-//res0: doobie.util.query.Query0[UserTable] = doobie.util.query$Query$$anon$3@69d4503e
 ```
 
 ### Other examples can be found in [tests](src/test/scala/prepy/)
