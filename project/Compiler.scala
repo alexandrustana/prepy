@@ -19,11 +19,10 @@ object Compiler {
       organization in ThisBuild := organizationName,
       homepage                  := Some(url(prepyHomepage)),
       scalaVersion              := mainScalaVersion,
-      crossScalaVersions        := List(scala2_12, scala2_13),
+      crossScalaVersions        := List(scala2_13),
       addCompilerPlugin(kindProjector),
       addCompilerPlugin(betterMonadicFor),
       scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 12)) => scala2_12Flags
         case Some((2, 13)) => scala2_13Flags
         case _             => Seq.empty
       }) ++ betterForPluginCompilerFlags
