@@ -24,7 +24,7 @@ case class A(id: Int)
 
 ## Get started
 
-Prepy is available on Scala 2.12, 2.13
+Prepy is available on Scala 2.13
 
 ```scala
 
