@@ -19,6 +19,7 @@ lazy val root = (project in file("."))
     name := "prepy",
     libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless)
   )
+  .aggregate(ast, formatters)
   .dependsOn(ast, formatters)
 
 lazy val ast = (project in file("ast"))
