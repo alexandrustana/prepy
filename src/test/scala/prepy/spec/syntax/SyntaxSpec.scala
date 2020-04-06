@@ -11,6 +11,14 @@ class SyntaxSpec extends Specification with TestDomain with TestImplicits {
 
     "be equal" in {
       "select query" in {
+        "join" in {
+          select[ATable]
+            .from[ATable]
+            .join[BTable]
+            .on((b, a) => b.iField == a.iField)
+            .apply() mustEqual Valid("")
+        }
+
         "without condition" in {
           select[ATable].from[ATable].apply() mustEqual Valid(
             "SELECT iField, jField, kField, lField, mField, nField, oField, pField FROM ATable"
