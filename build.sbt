@@ -23,6 +23,7 @@ lazy val root = (project in file("."))
   .dependsOn(ast, formatters)
 
 lazy val ast = (project in file("ast"))
+  .settings(Publish.sonatypeSettings)
   .settings(Compiler.commonSettings)
   .settings(
     libraryDependencies ++= libs.specs2 ++ Seq(libs.shapeless, libs.cats, libs.macros, libs.doobie)
@@ -30,6 +31,7 @@ lazy val ast = (project in file("ast"))
   .dependsOn(formatters)
 
 lazy val formatters = (project in file("formatters"))
+  .settings(Publish.sonatypeSettings)
   .settings(Compiler.commonSettings)
   .settings(
     libraryDependencies ++= libs.specs2
