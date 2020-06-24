@@ -1,37 +1,41 @@
 package prepy.spec.implicits
 
-import prepy.syntax._
 import org.specs2.mutable._
 import prepy.TestDomain
-import prepy.syntax.implicits.Internal.Transform
+import prepy.syntax.implicits.Internal.Validate
 import shapeless.test.illTyped
 
-class TransformSpec extends Specification with TestDomain {
+class ValidateSpec extends Specification with TestDomain {
 
   "transform" should {
     "succeed" in {
       "same case class" in {
-        implicitly[Transform[ATable, ATable]]
+        implicitly[Validate[ATable, ATable]]
         success
       }
 
       "different case class" in {
         "flat case class" in {
-          implicitly[Transform[ATable, BTable]]
+          implicitly[Validate[ATable, BTable]]
           success
         }
 
         "one level nested case class" in {
-          implicitly[Transform[ATable, DTable]]
+          implicitly[Validate[ATable, DTable]]
           success
         }
 
         "two levels nested case class" in {
-          implicitly[Transform[ATable, ETable]]
+          implicitly[Validate[ATable, ETable]]
           success
         }
       }
 
+      "dummy validation" in {
+        implicit val dummy: Validate[ETable, ATable] = Validate.dummy[ETable, ATable]
+        implicitly[Validate[ETable, ATable]]
+        success
+      }
     }
 
     "fail" in {

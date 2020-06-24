@@ -4,11 +4,15 @@ import prepy.syntax.implicits.Internal
 import shapeless._
 import shapeless.ops.hlist.{FillWith, FlatMapper, ToList}
 
-private[implicits] trait Serialize extends FlattenPoly {
+import scala.reflect.ClassTag
+
+private[implicits] trait SerializeInvoke extends FlattenPoly {
+  type ClassName                    = String
   type Serialize[Entity <: Product] = Internal.Serialize[Entity]
 
-  private def pure[T <: Product](symbols: List[Symbol]): Serialize[T] = new Serialize[T] {
+  private def pure[T <: Product](symbols: List[Symbol])(implicit tag: ClassTag[T]): Serialize[T] = new Serialize[T] {
     override val fields: List[Symbol] = symbols
+    override val name:   String       = tag.runtimeClass.getSimpleName
   }
 
   object witnessPoly extends Poly0 {
@@ -26,8 +30,9 @@ private[implicits] trait Serialize extends FlattenPoly {
     implicit generic: LabelledGeneric.Aux[Entity, EntityRepr],
     flatMap:          FlatMapper.Aux[flattenNestedNames.type, EntityRepr, FlatEntityRepr],
     toList:           ToList[FlatEntityRepr, Symbol],
-    fill:             FillWith[witnessPoly.type, FlatEntityRepr]
+    fill:             FillWith[witnessPoly.type, FlatEntityRepr],
+    tag:              ClassTag[Entity]
   ): Serialize[Entity] = {
-    pure(toList(fill()))
+    pure[Entity](toList(fill()))
   }
 }

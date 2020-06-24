@@ -1,6 +1,5 @@
 package prepy.spec.implicits
 
-import prepy.syntax._
 import org.specs2.mutable._
 import prepy.TestDomain
 import prepy.syntax.implicits.Internal.Serialize

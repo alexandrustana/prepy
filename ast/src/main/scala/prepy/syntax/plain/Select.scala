@@ -6,12 +6,11 @@ import prepy.formatter.Formatter
 import prepy.formatter.identity.IdentityFormatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
-import shapeless.Typeable
 
 private[syntax] trait Select {
 
-  def select[T <: Product](implicit inst: Serialize[T]): Select.`selectT`[T] =
-    Select.`selectT`[T](inst.fields)
+  def select[T <: Product](implicit inst: IdentityTransform[T]): Select.`selectT`[T] =
+    Select.`selectT`[T](inst.from.fields)
 
 }
 
@@ -20,15 +19,16 @@ object Select {
     override def apply()(implicit formatter: Formatter = IdentityFormatter): Validated[String, String] =
       Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[K]`")
 
-    def from[K <: Product](implicit typeable: Typeable[K], transform: Transform[K, T]): Select.`fromT`[T] =
-      `fromT`[T](this, typeable.describe)
+    def from[K <: Product](implicit transform: Transform[K, T]): Select.`fromT`[T] =
+      `fromT`[T](this, transform.from.name)
 
     override def toString: String = s"SELECT ${fields.map(_.name).map(Codec.encode).mkString(", ")}"
   }
 
   private[syntax] case class `fromT`[T <: Product](queryElement: Query, tableName: String) extends Query {
-    import scala.language.experimental.macros
     import Where._
+
+    import scala.language.experimental.macros
 
     type Out = T
 

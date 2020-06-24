@@ -1,20 +1,21 @@
 package prepy.syntax.plain
 
+import prepy.syntax.implicits.Internal.IdentityTransform
 import prepy.syntax.internal.Codec
-import shapeless.Typeable
 
 private[syntax] trait Delete {
 
   def delete[T <: Product](
-    implicit typeable: Typeable[T]
+    implicit transform: IdentityTransform[T]
   ): Delete.`deleteT`[T] =
-    Delete.`deleteT`[T](typeable.describe)
+    Delete.`deleteT`[T](transform.from.name)
 }
 
 object Delete {
   private[syntax] case class `deleteT`[T <: Product](tableName: String) extends Query {
-    import scala.language.experimental.macros
     import Where._
+
+    import scala.language.experimental.macros
 
     type Out = T
 
