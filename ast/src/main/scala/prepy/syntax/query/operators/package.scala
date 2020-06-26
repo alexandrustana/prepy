@@ -1,4 +1,4 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
 import scala.annotation.tailrec
 import scala.reflect.api.Trees

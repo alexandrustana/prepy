@@ -4,8 +4,13 @@ import prepy.syntax.implicits.Internal
 import shapeless.ops.hlist._
 import shapeless.{HList, HNil, LabelledGeneric}
 
-trait Validate extends FlattenPoly {
-  type Transform[From <: Product, To <: Product] = Internal.Transform[From, To]
+trait ValidateInvoke extends LowPriorityInvoke {
+  implicit def identityTransformation[From <: Product, To <: Product](implicit eq: From =:= To): Validate[From, To] =
+    new Validate[From, To] {}
+}
+
+trait LowPriorityInvoke extends FlattenPoly {
+  type Validate[From <: Product, To <: Product] = Internal.Validate[From, To]
 
   implicit def validateTransformation[
     From <: Product,
@@ -29,6 +34,6 @@ trait Validate extends FlattenPoly {
     sameFieldNames:   DiffNames =:= HNil,
     differentTypes:   Diff.Aux[FlatToTypes, FlatFromTypes, DiffTypes],
     sameFieldTypes:   DiffTypes =:= HNil
-  ): Transform[From, To] = new Transform[From, To] {}
+  ): Validate[From, To] = new Validate[From, To] {}
 
 }

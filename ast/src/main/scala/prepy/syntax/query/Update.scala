@@ -1,37 +1,36 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
-import cats.data.Validated
-import cats.data.Validated.Invalid
+import cats.MonadError
 import prepy.formatter.Formatter
-import prepy.formatter.identity.IdentityFormatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
-import shapeless.Typeable
+import prepy.syntax.query.expection.InvalidQuery
 
 private[syntax] trait Update {
 
   def update[T <: Product](
-    implicit typeable: Typeable[T]
+    implicit transform: IdentityTransform[T]
   ): Update.`updateT`[T] =
-    Update.`updateT`[T](typeable.describe)
+    Update.`updateT`[T](transform.to.name)
 
 }
 
 object Update {
 
   private[syntax] case class `updateT`[T <: Product](tableName: String) extends Query {
-    override def apply()(implicit formatter: Formatter = IdentityFormatter): Validated[String, String] =
-      Invalid("Incomplete SQL query. `update[T]` must be followed by a `set[K]`")
+    override def apply[F[_]]()(implicit formatter: Formatter, F: MonadError[F, Throwable]): F[String] =
+      F.raiseError(InvalidQuery("Incomplete SQL query. `update[T]` must be followed by a `set[K]`"))
 
-    def set[K <: Product](implicit domain: Serialize[K], transform: Transform[T, K]): `setT`[K] =
-      `setT`[K](this, domain.fields)
+    def set[K <: Product](implicit transform: Transform[T, K]): `setT`[K] =
+      `setT`[K](this, transform.to.fields)
 
     override def toString: String = s"UPDATE ${Codec.encode(tableName)}"
   }
 
   private[syntax] case class `setT`[T <: Product](queryElement: Query, fields: List[Symbol]) extends Query {
-    import scala.language.experimental.macros
     import Where._
+
+    import scala.language.experimental.macros
 
     type Out = T
 

@@ -1,29 +1,27 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
-import cats.data.Validated
-import cats.data.Validated.Invalid
+import cats.MonadError
 import prepy.formatter.Formatter
-import prepy.formatter.identity.IdentityFormatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
-import shapeless.Typeable
+import prepy.syntax.query.expection.InvalidQuery
 
 private[prepy] trait Insert {
 
   def insert[T <: Product](
-    implicit typeable: Typeable[T]
+    implicit transform: IdentityTransform[T]
   ): Insert.`insertT`[T] =
-    Insert.`insertT`[T](typeable.describe)
+    Insert.`insertT`[T](transform.to.name)
 
 }
 
 object Insert {
   private[syntax] case class `insertT`[T <: Product](tableName: String) extends Query {
-    override def apply()(implicit formatter: Formatter = IdentityFormatter): Validated[String, String] =
-      Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`")
+    override def apply[F[_]]()(implicit formatter: Formatter, F: MonadError[F, Throwable]): F[String] =
+      F.raiseError(InvalidQuery("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`"))
 
-    def values[K <: Product](implicit inst: Serialize[K], transform: Transform[T, K]): `valuesT`[K] =
-      `valuesT`[K](this, inst.fields)
+    def values[K <: Product](implicit transform: Transform[T, K]): `valuesT`[K] =
+      `valuesT`[K](this, transform.to.fields)
 
     override def toString: String = s"INSERT INTO ${Codec.encode(tableName)}"
   }

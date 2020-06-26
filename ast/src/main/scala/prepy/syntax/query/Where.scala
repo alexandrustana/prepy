@@ -1,9 +1,10 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
 object Where {
-  import prepy.syntax.plain.operators.getExpression
-  import scala.reflect.macros.blackbox
+  import prepy.syntax.query.operators.getExpression
+
   import scala.language.experimental.macros
+  import scala.reflect.macros.blackbox
 
   def stringify[T <: Product](predicate: T => Boolean): String = macro stringifyPredicate[T]
 
