@@ -1,7 +1,6 @@
 package prepy.spec.syntax
 
 import cats.effect.IO
-import cats.implicits._
 import org.specs2.mutable._
 import prepy.syntax.query.expection.InvalidQuery
 import prepy.{TestDomain, _}

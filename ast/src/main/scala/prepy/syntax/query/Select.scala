@@ -1,6 +1,6 @@
 package prepy.syntax.query
 
-import cats.effect.Sync
+import cats.MonadError
 import prepy.formatter.Formatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
@@ -15,7 +15,7 @@ private[syntax] trait Select {
 
 object Select {
   private[syntax] case class `selectT`[T <: Product](fields: List[Symbol]) extends Query {
-    override def apply[F[_]: Sync]()(implicit formatter: Formatter, F: Sync[F]): F[String] =
+    override def apply[F[_]]()(implicit formatter: Formatter, F: MonadError[F, Throwable]): F[String] =
       F.raiseError(InvalidQuery("Incomplete SQL query. `select[T]` must be followed by a `from[K]`"))
 
     def from[K <: Product](implicit transform: Transform[K, T]): Select.`fromT`[T] =

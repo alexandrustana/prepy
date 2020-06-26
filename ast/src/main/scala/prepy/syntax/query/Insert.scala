@@ -1,6 +1,6 @@
 package prepy.syntax.query
 
-import cats.effect.Sync
+import cats.MonadError
 import prepy.formatter.Formatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
@@ -17,7 +17,7 @@ private[prepy] trait Insert {
 
 object Insert {
   private[syntax] case class `insertT`[T <: Product](tableName: String) extends Query {
-    override def apply[F[_]: Sync]()(implicit formatter: Formatter, F: Sync[F]): F[String] =
+    override def apply[F[_]]()(implicit formatter: Formatter, F: MonadError[F, Throwable]): F[String] =
       F.raiseError(InvalidQuery("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`"))
 
     def values[K <: Product](implicit transform: Transform[T, K]): `valuesT`[K] =
