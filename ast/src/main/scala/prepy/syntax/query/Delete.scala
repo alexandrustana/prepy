@@ -1,4 +1,4 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
 import prepy.syntax.implicits.Internal.IdentityTransform
 import prepy.syntax.internal.Codec

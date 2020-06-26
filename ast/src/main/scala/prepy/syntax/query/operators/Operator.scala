@@ -1,4 +1,4 @@
-package prepy.syntax.plain.operators
+package prepy.syntax.query.operators
 
 import prepy.syntax.internal.Codec
 

@@ -1,10 +1,13 @@
 package prepy.spec.syntax
 
+import cats.effect.{Async, IO}
 import prepy.TestDomain
 import prepy.syntax.implicits.Internal._
 import shapeless.cachedImplicit
 
 trait TestImplicits extends TestDomain {
+  implicit lazy val async: Async[IO] = IO.ioEffect
+
   implicit val AtransformA: Transform[ATable, ATable] = cachedImplicit[Transform[ATable, ATable]]
   implicit val AtransformB: Transform[ATable, BTable] = cachedImplicit[Transform[ATable, BTable]]
   implicit val AtransformC: Transform[ATable, CTable] = cachedImplicit[Transform[ATable, CTable]]

@@ -1,11 +1,10 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
-import cats.data.Validated
-import cats.data.Validated.Invalid
+import cats.effect.Sync
 import prepy.formatter.Formatter
-import prepy.formatter.identity.IdentityFormatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
+import prepy.syntax.query.expection.InvalidQuery
 
 private[syntax] trait Select {
 
@@ -16,8 +15,8 @@ private[syntax] trait Select {
 
 object Select {
   private[syntax] case class `selectT`[T <: Product](fields: List[Symbol]) extends Query {
-    override def apply()(implicit formatter: Formatter = IdentityFormatter): Validated[String, String] =
-      Invalid("Incomplete SQL query. `select[T]` must be followed by a `from[K]`")
+    override def apply[F[_]: Sync]()(implicit formatter: Formatter, F: Sync[F]): F[String] =
+      F.raiseError(InvalidQuery("Incomplete SQL query. `select[T]` must be followed by a `from[K]`"))
 
     def from[K <: Product](implicit transform: Transform[K, T]): Select.`fromT`[T] =
       `fromT`[T](this, transform.from.name)

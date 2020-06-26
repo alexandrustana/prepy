@@ -1,11 +1,10 @@
-package prepy.syntax.plain
+package prepy.syntax.query
 
-import cats.data.Validated
-import cats.data.Validated.Invalid
+import cats.effect.Sync
 import prepy.formatter.Formatter
-import prepy.formatter.identity.IdentityFormatter
 import prepy.syntax.implicits.Internal._
 import prepy.syntax.internal.Codec
+import prepy.syntax.query.expection.InvalidQuery
 
 private[prepy] trait Insert {
 
@@ -18,8 +17,8 @@ private[prepy] trait Insert {
 
 object Insert {
   private[syntax] case class `insertT`[T <: Product](tableName: String) extends Query {
-    override def apply()(implicit formatter: Formatter = IdentityFormatter): Validated[String, String] =
-      Invalid("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`")
+    override def apply[F[_]: Sync]()(implicit formatter: Formatter, F: Sync[F]): F[String] =
+      F.raiseError(InvalidQuery("Incomplete SQL query. `insert[T]` must be followed by a `values[K]`"))
 
     def values[K <: Product](implicit transform: Transform[T, K]): `valuesT`[K] =
       `valuesT`[K](this, transform.to.fields)

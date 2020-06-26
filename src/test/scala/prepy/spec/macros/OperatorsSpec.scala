@@ -4,7 +4,7 @@ import org.specs2.mutable._
 import prepy.TestDomain
 import prepy.syntax.Syntax
 import prepy.syntax.internal.Codec
-import prepy.syntax.plain.Where._
+import prepy.syntax.query.Where._
 
 class OperatorsSpec extends Specification with TestDomain with Syntax {
   "single operators in expression" should {
